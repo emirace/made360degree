@@ -75,7 +75,7 @@ export default function BlogDetail({ params }: PageProps) {
               </div>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-bold leading-tight tracking-tight">
+            <h1 className="text-2xl md:text-6xl font-bold leading-tight tracking-tight">
               {post.title}
             </h1>
 

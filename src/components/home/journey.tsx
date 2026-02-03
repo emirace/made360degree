@@ -84,11 +84,11 @@ export default function Journey() {
             <h2 className="text-sm font-medium tracking-[0.2em] text-primary uppercase mb-4">
               Our Services
             </h2>
-            <h3 className="text-4xl md:text-6xl font-bold text-white mb-6">
+            <h3 className="text-2xl md:text-6xl font-bold text-white mb-6">
               Leadership{" "}
               <span className="text-primary italic">Engagements</span>
             </h3>
-            <p className="text-lg text-white/60">
+            <p className="text-base text-white/60">
               Explore our structured coaching and development engagements
               designed for sustainable impact.
             </p>
@@ -97,8 +97,8 @@ export default function Journey() {
 
         <motion.div style={{ x }} className="flex gap-8 px-6 md:px-24">
           {journeySteps.map((step, index) => (
-            <div key={index} className="shrink-0 w-[85vw] md:w-[450px]">
-              <div className="group relative aspect-video overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm transition-all hover:border-primary/50">
+            <div key={index} className="shrink-0  w-[85vw] md:w-[450px]">
+              <div className="group relative  h-96 md:h-72 overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-sm transition-all hover:border-primary/50">
                 <Image
                   src={step.image}
                   alt={step.title}
@@ -107,10 +107,10 @@ export default function Journey() {
                 />
                 <div className="absolute inset-0 bg-linear-to-t from-black via-black/20 to-transparent" />
                 <div className="absolute bottom-0 p-4 md:p-8">
-                  <span className="text-primary font-bold text-5xl mb-4 block opacity-40">
+                  <span className="text-primary font-bold text-4xl mb-4 block opacity-40">
                     0{index + 1}
                   </span>
-                  <h4 className="text-xl md:text-2xl font-bold text-white mb-2 leading-tight">
+                  <h4 className="text-lg md:text-2xl font-bold text-white mb-2 leading-tight">
                     {step.title}
                   </h4>
                   <p className="text-sm md:text-white/70">{step.description}</p>

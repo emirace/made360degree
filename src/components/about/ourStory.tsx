@@ -25,7 +25,7 @@ const OurStory = () => {
                 <MoveRight className="h-3 w-3" />
               </div>
 
-              <h2 className="text-3xl md:text-4xl font-bold leading-tight tracking-tight">
+              <h2 className="text-2xl md:text-4xl font-bold leading-tight tracking-tight">
                 Empowering Leaders & Organizations{" "}
                 <span className="text-primary italic">Since 2014.</span>
               </h2>
@@ -96,7 +96,7 @@ const OurStory = () => {
 
             <div className="space-y-8 flex-1 flex flex-col justify-center">
               <div className="space-y-4">
-                <p className="text-lg text-white/80 leading-relaxed font-light">
+                <p className="text-base text-white/80 leading-relaxed font-light">
                   <span className="text-white font-bold">Made360Degrees</span>{" "}
                   is a personal development and leadership training organization
                   founded in 2014 in the United Kingdom.

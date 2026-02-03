@@ -61,7 +61,7 @@ export default function Blog() {
               Latest Blogs
               <ArrowRight className="h-4 w-4" />
             </div>
-            <h2 className="text-5xl md:text-7xl font-bold text-black tracking-tight">
+            <h2 className="text-3xl md:text-7xl font-bold text-black tracking-tight">
               Master your <br />
               <span className="text-primary italic">performance.</span>
             </h2>
@@ -127,11 +127,11 @@ export default function Blog() {
                 </div>
 
                 <div className="mb-8">
-                  <h3 className="text-2xl font-bold mb-3 leading-[1.2] tracking-tight">
+                  <h3 className="text-lg font-bold mb-3 leading-[1.2] tracking-tight">
                     {blog.title}
                   </h3>
                   <p
-                    className={`text-base leading-relaxed line-clamp-2 ${
+                    className={`text-sm leading-relaxed line-clamp-2 ${
                       blog.highlight ? "text-white/80" : "text-black/60"
                     }`}
                   >
@@ -158,7 +158,7 @@ export default function Blog() {
         <div className="mt-10 flex justify-center">
           <MagneticButton>
             <Link href="/blog">
-              <Button className="group rounded-full bg-primary h-12  p-1 text-lg font-medium text-white transition-all hover:bg-primary/90">
+              <Button className="group rounded-full bg-primary h-12  p-1 text-base font-medium text-white transition-all hover:bg-primary/90">
                 <span className="px-4">View More</span>
                 <div className="ml-3 flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary transition-transform group-hover:translate-x-1">
                   <ChevronRight className="h-4 w-4" />

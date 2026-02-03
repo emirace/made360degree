@@ -17,7 +17,7 @@ export default function Home() {
         <Hero />
       </div>
 
-      <div className="md:sticky top-0 z-20 md:h-screen overflow-hidden">
+      <div className="md:sticky top-0 z-20 md:h-152 overflow-hidden">
         <Transformation />
       </div>
       <div className="relative z-25">

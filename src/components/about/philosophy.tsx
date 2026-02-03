@@ -60,7 +60,7 @@ const Philosophy = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight max-w-4xl"
+            className="text-2xl md:text-5xl lg:text-6xl font-bold tracking-tight max-w-4xl"
           >
             Where many focus on inspiration alone, we focus on{" "}
             <span className="text-primary italic">application.</span>
@@ -70,7 +70,7 @@ const Philosophy = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-xl text-black/60 max-w-2xl"
+            className="text-lg text-black/60 max-w-2xl"
           >
             We believe leadership is developed through clarity, discipline,
             emotional intelligence, and consistent execution.
@@ -92,7 +92,7 @@ const Philosophy = () => {
               </div>
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-2xl font-bold tracking-tight">
+                  <h3 className="text-xl font-bold tracking-tight">
                     {principle.title}
                   </h3>
                   <p className="text-sm font-bold text-primary uppercase tracking-wider">

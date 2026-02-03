@@ -14,7 +14,7 @@ const Transformation = () => {
   ];
 
   return (
-    <section className="bg-white min-h-screen flex items-center py-20 overflow-hidden">
+    <section className="bg-white min-h-screen flex p-8 overflow-hidden">
       <div className="mx-auto max-w-7xl px-6 lg:px-8 w-full">
         <div className="grid grid-cols-1 gap-y-12 lg:grid-cols-2 lg:gap-x-16 items-center">
           <div className="relative w-full max-w-lg mx-auto lg:max-w-none group h-[400px] sm:h-[500px]">
@@ -61,14 +61,14 @@ const Transformation = () => {
             transition={{ duration: 0.8 }}
             className="flex flex-col justify-center"
           >
-            <h2 className="text-3xl font-bold tracking-tight text-secondary sm:text-4xl mb-4 leading-tight">
+            <h2 className="text-2xl font-bold tracking-tight text-secondary sm:text-4xl mb-4 leading-tight">
               In a world saturated with motivation, <br />
               <span className="text-primary italic">
                 Made360Degrees focuses on measurable transformation.
               </span>
             </h2>
 
-            <p className="text-lg leading-relaxed text-secondary/70 mb-4">
+            <p className="text-base leading-relaxed text-secondary/70 mb-4">
               Founded in the UK in 2014, we combine:
             </p>
 
@@ -85,7 +85,7 @@ const Transformation = () => {
                   <div className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
                     <Check className="h-4 w-4" />
                   </div>
-                  <span className="text-lg font-medium text-secondary/80 group-hover:text-secondary transition-colors">
+                  <span className="text-base font-medium text-secondary/80 group-hover:text-secondary transition-colors">
                     {point}
                   </span>
                 </motion.li>
@@ -99,10 +99,10 @@ const Transformation = () => {
               transition={{ duration: 0.8, delay: 0.8 }}
               className="border-l-4 border-primary pl-6 py-2"
             >
-              <p className="text-xl font-medium leading-relaxed text-secondary italic">
-                "To help individuals and organizations lead better, work better,
-                and live better. This is leadership development designed for
-                execution."
+              <p className="text-lg font-medium leading-relaxed text-secondary italic">
+                &quot;To help individuals and organizations lead better, work
+                better, and live better. This is leadership development designed
+                for execution.&quot;
               </p>
             </motion.div>
           </motion.div>

@@ -87,7 +87,7 @@ export default function Events() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-5xl md:text-7xl font-bold text-black tracking-tight mb-6"
+            className="text-3xl md:text-7xl font-bold text-black tracking-tight mb-6"
           >
             Upcoming Events
           </motion.h2>
@@ -96,7 +96,7 @@ export default function Events() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-xl text-black/60 max-w-2xl mx-auto"
+            className="text-lg text-black/60 max-w-2xl mx-auto"
           >
             Upcoming workshops, seminars, and speaking engagements.
           </motion.p>
@@ -133,15 +133,15 @@ export default function Events() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     className="space-y-2"
                   >
-                    <h3 className="text-2xl md:text-3xl font-bold leading-tight">
+                    <h3 className="text-xl md:text-3xl font-bold leading-tight">
                       {event.title}
                     </h3>
-                    <p className="text-white/70 text-md max-w-[280px] mx-auto">
+                    <p className="text-white/70 text-sm max-w-[280px] mx-auto">
                       {event.subtitle}
                     </p>
 
                     <div className="pt-8">
-                      <Button className="rounded-full border border-white/30 bg-transparent px-8 py-6 text-lg font-medium text-white transition-all hover:bg-white hover:text-black">
+                      <Button className="rounded-full border border-white/30 bg-transparent px-8 py-6 text-base font-medium text-white transition-all hover:bg-white hover:text-black">
                         Register Now
                       </Button>
                     </div>
@@ -180,7 +180,7 @@ export default function Events() {
 
         <div className="md:mt-10 flex justify-center">
           <MagneticButton>
-            <Button className="group rounded-full bg-primary h-14 p-1 text-xl font-medium text-white transition-all hover:bg-primary/90 shadow-2xl">
+            <Button className="group rounded-full bg-primary h-14 p-1 text-lg font-medium text-white transition-all hover:bg-primary/90 shadow-2xl">
               <span className="px-6">View All Events</span>
               <div className="ml-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary transition-transform group-hover:translate-x-1">
                 <ChevronRight className="h-5 w-5" />

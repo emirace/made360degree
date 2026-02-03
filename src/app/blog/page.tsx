@@ -42,7 +42,7 @@ export default function BlogListing() {
             <span className="px-4 py-1.5 rounded-full border border-white/10 text-[10px] font-bold tracking-[0.2em] uppercase text-white/50">
               The leadership journal
             </span>
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
+            <h1 className="text-3xl md:text-7xl font-bold tracking-tight">
               Insights for <span className="text-primary italic">Impact.</span>
             </h1>
             <div className="flex items-center justify-center gap-2 text-white/50 text-sm font-medium pt-4">
@@ -119,7 +119,7 @@ export default function BlogListing() {
                         </div>
                       </div>
 
-                      <h3 className="text-2xl font-bold leading-tight group-hover:text-primary transition-colors duration-300">
+                      <h3 className="text-xl font-bold leading-tight group-hover:text-primary transition-colors duration-300">
                         {post.title}
                       </h3>
 

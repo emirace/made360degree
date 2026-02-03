@@ -92,11 +92,11 @@ export default function Approach() {
             <h2 className="text-sm font-medium tracking-[0.2em] text-primary uppercase mb-4">
               Our Approach
             </h2>
-            <h3 className="text-4xl md:text-6xl font-bold text-black mb-6">
+            <h3 className="text-2xl md:text-6xl font-bold text-black mb-6">
               Leadership Development Grounded in{" "}
               <span className="text-primary italic">Reality</span>
             </h3>
-            <p className="text-xl text-black/60 leading-relaxed max-w-2xl">
+            <p className="text-lg text-black/60 leading-relaxed max-w-2xl">
               Our approach strengthens decision-making, team performance,
               organizational culture, and sustained results.
             </p>
@@ -112,7 +112,7 @@ export default function Approach() {
               <h4 className="text-primary font-bold uppercase tracking-widest text-xs mb-3">
                 Core Belief
               </h4>
-              <p className="text-2xl font-bold text-black leading-tight">
+              <p className="text-xl font-bold text-black leading-tight">
                 Leadership is measured by decisions, influence, discipline, and
                 clarity.
               </p>
@@ -144,7 +144,7 @@ export default function Approach() {
 
         <div className="mb-32">
           <div className="flex items-center gap-4 mb-12">
-            <h3 className="text-3xl font-bold text-black">Four Pillars</h3>
+            <h3 className="text-2xl font-bold text-black">Four Pillars</h3>
             <div className="h-px flex-1 bg-black/10" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -169,7 +169,7 @@ export default function Approach() {
                   <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
                     <pillar.icon className="h-6 w-6" />
                   </div>
-                  <h4 className="text-2xl font-bold text-black mb-4">
+                  <h4 className="text-xl font-bold text-black mb-4">
                     <span className="text-primary/50 mr-2">{index + 1}.</span>
                     {pillar.title}
                   </h4>
@@ -194,7 +194,7 @@ export default function Approach() {
                 <div className="h-14 w-14 rounded-2xl bg-primary flex items-center justify-center text-white">
                   <Users className="h-7 w-7" />
                 </div>
-                <h4 className="text-3xl font-bold text-black">
+                <h4 className="text-2xl font-bold text-black">
                   Organizational Engagements
                 </h4>
               </div>
@@ -202,7 +202,7 @@ export default function Approach() {
                 {organizationalEngagements.map((item, i) => (
                   <li
                     key={i}
-                    className="flex items-center gap-4 text-black/70 text-lg group"
+                    className="flex items-center gap-4 text-black/70 text-base group"
                   >
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 border border-black/10 text-primary font-bold text-sm shrink-0 group-hover:bg-primary group-hover:text-white transition-colors">
                       {i + 1}
@@ -241,7 +241,7 @@ export default function Approach() {
                 <div className="h-14 w-14 rounded-2xl bg-black text-white flex items-center justify-center">
                   <User className="h-7 w-7" />
                 </div>
-                <h4 className="text-3xl font-bold text-black">
+                <h4 className="text-2xl font-bold text-black">
                   Individual Engagements
                 </h4>
               </div>
@@ -249,7 +249,7 @@ export default function Approach() {
                 {individualEngagements.map((item, i) => (
                   <li
                     key={i}
-                    className="flex items-center gap-4 text-black/70 text-lg"
+                    className="flex items-center gap-4 text-black/70 text-base"
                   >
                     <div className="h-2 w-2 rounded-full bg-primary shrink-0" />
                     {item}
@@ -281,13 +281,13 @@ export default function Approach() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="text-2xl font-bold uppercase tracking-widest opacity-80 mb-6"
+                className="text-lg font-bold uppercase tracking-widest opacity-80 mb-6"
               >
                 Suitability
               </motion.h4>
               <div className="space-y-4 mb-12">
                 {suitabilityPoints.map((point, i) => (
-                  <div key={i} className="flex items-center gap-4 text-xl">
+                  <div key={i} className="flex items-center gap-4 text-lg">
                     <Check className="h-6 w-6 font-bold shrink-0" />
                     <span>{point}</span>
                   </div>
@@ -298,7 +298,7 @@ export default function Approach() {
                 <h4 className="text-xs font-bold uppercase tracking-widest opacity-60 mb-2">
                   Our Commitment
                 </h4>
-                <p className="text-2xl md:text-3xl font-bold leading-tight">
+                <p className="text-xl md:text-3xl font-bold leading-tight">
                   Thoughtful, grounded, relevant, and sustainable leadership
                   development.
                 </p>
@@ -307,13 +307,13 @@ export default function Approach() {
 
             <div className="lg:col-span-2 flex flex-col items-center lg:items-end justify-center">
               <div className="text-center lg:text-right mb-8">
-                <p className="text-5xl md:text-6xl font-black mb-2">READY?</p>
-                <p className="text-xl opacity-80 font-medium">
+                <p className="text-4xl md:text-6xl font-black mb-2">READY?</p>
+                <p className="text-lg opacity-80 font-medium">
                   Let's transform your leadership capacity.
                 </p>
               </div>
               <MagneticButton>
-                <Button className="group rounded-full bg-white h-12  p-1 text-lg font-medium text-black transition-all hover:bg-white/90">
+                <Button className="group rounded-full bg-white h-12  p-1 text-base font-medium text-black transition-all hover:bg-white/90">
                   <span className="px-4">Engage Made360Degrees</span>
                   <div className="ml-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white transition-transform group-hover:translate-x-1">
                     <ChevronRight className="h-4 w-4" />

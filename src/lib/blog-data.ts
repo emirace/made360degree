@@ -25,7 +25,7 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "6 min read",
     image: "/images/audience-executive.png",
     author: {
-      name: "Kelvin Dada",
+      name: "Mr. Kelvin Dada",
       role: "Principal Coach",
       avatar: "/images/visionary.jpeg",
     },
@@ -33,6 +33,8 @@ export const BLOG_POSTS: BlogPost[] = [
       <h2>The Core of Modern Leadership</h2>
       <p>Leadership in the 21st century isn't just about managing teams; it's about managing yourself first. In a world saturated with digital noise, the ability to maintain clarity of vision is the ultimate competitive advantage.</p>
       
+      <img src="/images/blog-leadership.png" alt="Modern Leadership" class="rounded-2xl my-8 shadow-2xl border border-black/5 w-full object-cover aspect-video" />
+
       <h3>1. Clarity Over Complexity</h3>
       <p>Most leaders fall into the trap of over-complicating their strategies. True leadership is about stripping away the non-essential and focusing on the three main pillars that drive impact.</p>
       
@@ -54,7 +56,7 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "5 min read",
     image: "/images/leadership-collaboration.png",
     author: {
-      name: "Kelvin Dada",
+      name: "Mr. Kelvin Dada",
       role: "Principal Coach",
       avatar: "/images/visionary.jpeg",
     },
@@ -62,6 +64,8 @@ export const BLOG_POSTS: BlogPost[] = [
       <h2>Collaboration Beyond the Boardroom</h2>
       <p>Effective collaboration is the heartbeat of any thriving organization. However, many leaders treat it as a mechanical process rather than a human interaction.</p>
       
+      <img src="/images/blog-collaboration.png" alt="Strategic Collaboration" class="rounded-2xl my-8 shadow-2xl border border-black/5 w-full object-cover aspect-video" />
+
       <h3>Building High-Trust Teams</h3>
       <p>Trust is the currency of high-performing teams. When leaders prioritize emotional intelligence over strict hierarchy, they unlock a level of creativity and commitment that data alone cannot achieve.</p>
       
@@ -78,7 +82,7 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "8 min read",
     image: "/images/audience-professional.png",
     author: {
-      name: "Kelvin Dada",
+      name: "Mr. Kelvin Dada",
       role: "Principal Coach",
       avatar: "/images/visionary.jpeg",
     },
@@ -86,6 +90,8 @@ export const BLOG_POSTS: BlogPost[] = [
       <h2>The Journey to the Top</h2>
       <p>Navigating a corporate career requires more than just technical skill. It requires a strategic mindset and the emotional intelligence to build lasting alliances.</p>
       
+      <img src="/images/blog-growth.png" alt="Corporate Growth" class="rounded-2xl my-8 shadow-2xl border border-black/5 w-full object-cover aspect-video" />
+
       <h3>Setting Realistic Horizons</h3>
       <p>We believe in 'application over inspiration'. Instead of waiting for a promotion, create the value that makes your promotion inevitable. This involves clear goal-setting and a disciplined approach to personal development.</p>
       

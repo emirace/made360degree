@@ -27,7 +27,7 @@ const AboutHero = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-5xl md:text-7xl font-bold text-white tracking-tight mb-6"
+          className="text-3xl md:text-7xl font-bold text-white tracking-tight mb-6"
         >
           About Us
         </motion.h1>

@@ -98,7 +98,7 @@ const Founder = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="text-4xl md:text-5xl font-bold tracking-tight leading-tight"
+                className="text-3xl md:text-5xl font-bold tracking-tight leading-tight"
               >
                 Leadership Built on <span className="italic">Experience.</span>
               </motion.h2>
@@ -109,12 +109,12 @@ const Founder = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="space-y-6 text-white/70 leading-relaxed text-lg font-light"
+              className="space-y-6 text-white/70 leading-relaxed text-base font-light"
             >
               <p>
-                <span className="text-white font-medium">Kelvin Dada</span> is a
-                visionary strategist and mentor with over a decade of experience
-                across the UK and Nigeria. His career spans{" "}
+                <span className="text-white font-medium">Mr. Kelvin Dada</span>{" "}
+                is a visionary strategist and mentor with over a decade of
+                experience across the UK and Nigeria. His career spans{" "}
                 <span className="text-white font-medium">
                   Jaguar Land Rover UK
                 </span>

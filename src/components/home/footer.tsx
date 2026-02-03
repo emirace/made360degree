@@ -61,7 +61,7 @@ const Footer = () => {
           <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/40 to-transparent" />
 
           <div className="absolute inset-0 flex flex-col justify-center p-8 md:p-16">
-            <h2 className="text-2xl md:text-4xl  max-w-3xl leading-tight mb-8">
+            <h2 className="text-xl md:text-4xl  max-w-3xl leading-tight mb-8">
               Leadership responsibility demands more than intention.
               <span className="font-bold">
                 {" "}
@@ -72,7 +72,7 @@ const Footer = () => {
 
             <div className="flex">
               <MagneticButton>
-                <Button className="group rounded-full bg-primary h-14 p-1 text-lg font-medium text-white transition-all hover:bg-primary/80">
+                <Button className="group rounded-full bg-primary h-14 p-1 text-base font-medium text-white transition-all hover:bg-primary/80">
                   <span className="px-6">Engage Made360Degrees</span>
                   <div className="ml-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary transition-transform group-hover:translate-x-1">
                     <ChevronRight className="h-5 w-5" />
@@ -118,7 +118,7 @@ const Footer = () => {
           <div className="md:col-span-7">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-sm">
               <div className="max-w-xs">
-                <h3 className="text-xl font-bold mb-2">
+                <h3 className="text-lg font-bold mb-2">
                   Join the inner circle
                 </h3>
                 <p className="text-sm text-white/50 leading-relaxed">
@@ -145,7 +145,7 @@ const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-16">
           {footerLinks.map((group, idx) => (
             <div key={idx} className="space-y-6">
-              <h4 className="text-lg font-bold">{group.title}</h4>
+              <h4 className="text-base font-bold">{group.title}</h4>
               <ul className="space-y-4">
                 {group.links.map((link, lidx) => (
                   <li key={lidx}>

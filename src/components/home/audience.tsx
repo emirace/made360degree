@@ -58,7 +58,7 @@ const Audience = () => {
                 « Who We Work With »
               </span>
             </div>
-            <h2 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
+            <h2 className="text-2xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
               Leadership development <br />
               <span className="text-white/40 italic">designed for you.</span>
             </h2>
@@ -68,7 +68,7 @@ const Audience = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1, delay: 0.2 }}
-            className="max-w-md text-lg text-white/60 leading-relaxed md:mb-2"
+            className="max-w-md text-base text-white/60 leading-relaxed md:mb-2"
           >
             Made360Degrees partners with organizations and individuals at
             critical stages of growth and transformation.
@@ -94,14 +94,14 @@ const Audience = () => {
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
                   <div className="absolute bottom-4 left-6">
-                    <h3 className="text-xl font-bold text-white pr-4">
+                    <h3 className="text-lg font-bold text-white pr-4">
                       {item.title}
                     </h3>
                   </div>
                 </div>
 
                 <div className="flex flex-1 flex-col p-8">
-                  <p className="text-white/70 mb-8 leading-relaxed">
+                  <p className="text-white/70 mb-8 leading-relaxed text-sm">
                     {item.description}
                   </p>
 

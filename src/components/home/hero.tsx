@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
@@ -96,7 +95,7 @@ const Hero = () => {
           className="flex flex-wrap items-center gap-6 mb-20"
         >
           <MagneticButton>
-            <Button className="group rounded-full bg-white h-12  p-1 text-lg font-medium text-black transition-all hover:bg-white/90">
+            <Button className="group rounded-full bg-white h-12  p-1 text-base font-medium text-black transition-all hover:bg-white/90">
               <span className="px-4">Engage Made360Degrees</span>
               <div className="ml-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white transition-transform group-hover:translate-x-1">
                 <ChevronRight className="h-4 w-4" />
@@ -104,7 +103,7 @@ const Hero = () => {
             </Button>
           </MagneticButton>
           <MagneticButton>
-            <button className="text-lg font-semibold text-white transition-colors hover:text-primary">
+            <button className="text-base font-semibold text-white transition-colors hover:text-primary">
               Explore Our Work
             </button>
           </MagneticButton>
@@ -116,25 +115,25 @@ const Hero = () => {
         >
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             <div>
-              <div className="mb-1 text-2xl font-bold text-white">500+</div>
+              <div className="mb-1 text-xl font-bold text-white">500+</div>
               <div className="text-sm text-white/40 uppercase tracking-widest font-medium">
                 Successful members
               </div>
             </div>
             <div>
-              <div className="mb-1 text-2xl font-bold text-white">2014</div>
+              <div className="mb-1 text-xl font-bold text-white">2014</div>
               <div className="text-sm text-white/40 uppercase tracking-widest font-medium">
                 Est. United Kingdom
               </div>
             </div>
             <div>
-              <div className="mb-1 text-2xl font-bold text-white">10+</div>
+              <div className="mb-1 text-xl font-bold text-white">10+</div>
               <div className="text-sm text-white/40 uppercase tracking-widest font-medium">
                 Years experience
               </div>
             </div>
             <div>
-              <div className="mb-1 text-2xl font-bold text-white">360°</div>
+              <div className="mb-1 text-xl font-bold text-white">360°</div>
               <div className="text-sm text-white/40 uppercase tracking-widest font-medium">
                 Full Circle Marketing
               </div>

@@ -69,11 +69,11 @@ const ContactForm = () => {
                 <span>Social Connections</span>
                 <div className="h-px w-10 bg-primary/30" />
               </motion.div>
-              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+              <h2 className="text-2xl md:text-5xl font-bold tracking-tight">
                 Connect with our <br />
                 <span className="text-primary italic">leadership network.</span>
               </h2>
-              <p className="text-black/60 text-lg leading-relaxed">
+              <p className="text-black/60 text-base leading-relaxed">
                 Whether you're looking for corporate training or 1-on-1
                 coaching, we're here to guide your transformation journey.
               </p>
@@ -94,9 +94,11 @@ const ContactForm = () => {
                     {info.icon}
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg">{info.title}</h3>
-                    <p className="text-black/80 font-medium">{info.details}</p>
-                    <p className="text-xs text-black/40 mt-1 uppercase tracking-widest font-bold">
+                    <h3 className="font-bold text-base">{info.title}</h3>
+                    <p className="text-black/80 font-medium text-sm">
+                      {info.details}
+                    </p>
+                    <p className="text-[10px] text-black/40 mt-1 uppercase tracking-widest font-bold">
                       {info.subDetails}
                     </p>
                   </div>

@@ -36,7 +36,7 @@ const ContactHero = () => {
             </span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white">
+          <h1 className="text-3xl md:text-7xl lg:text-8xl font-bold tracking-tight text-white">
             Let's Build Something{" "}
             <span className="text-primary italic">Great.</span>
           </h1>
