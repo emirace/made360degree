@@ -18,24 +18,46 @@ import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   const socialLinks = [
-    { icon: <Youtube className="h-5 w-5" />, href: "#" },
-    { icon: <Instagram className="h-5 w-5" />, href: "#" },
-    { icon: <Twitter className="h-5 w-5" />, href: "#" },
-    { icon: <Facebook className="h-5 w-5" />, href: "#" },
-    { icon: <Linkedin className="h-5 w-5" />, href: "#" },
+    { icon: <Youtube className="h-5 w-5" />, href: "https://youtube.com" },
+    { icon: <Instagram className="h-5 w-5" />, href: "https://instagram.com" },
+    { icon: <Twitter className="h-5 w-5" />, href: "https://twitter.com" },
+    { icon: <Facebook className="h-5 w-5" />, href: "https://facebook.com" },
+    { icon: <Linkedin className="h-5 w-5" />, href: "https://linkedin.com" },
   ];
 
   const footerLinks = [
-    { title: "About", links: ["Our Story", "Leadership Team", "Methodology"] },
+    {
+      title: "About",
+      links: [
+        { name: "Our Story", href: "/about" },
+        { name: "Leadership Team", href: "/about" },
+        { name: "Methodology", href: "/#approach" },
+      ],
+    },
     {
       title: "Services",
-      links: ["Executive Coaching", "Strategy Workshops", "Leadership Audits"],
+      links: [
+        { name: "Executive Coaching", href: "/#journey" },
+        { name: "Strategy Workshops", href: "/#journey" },
+        { name: "Leadership Audits", href: "/#journey" },
+      ],
     },
     {
       title: "Resources",
-      links: ["Insights", "Case Studies", "Free Toolkits"],
+      links: [
+        { name: "Insights", href: "/blog" },
+        { name: "Case Studies", href: "/blog" },
+        { name: "Free Toolkits", href: "/blog" },
+      ],
     },
-    { title: "Company", links: ["Careers", "Affiliate Program", "Contact Us"] },
+    {
+      title: "Company",
+      links: [
+        { name: "Careers", href: "#" },
+        { name: "Events", href: "#" },
+        { name: "Contact Us", href: "/contact" },
+      ],
+    },
   ];
 
   const scrollToTop = () => {
@@ -71,14 +93,16 @@ const Footer = () => {
             </h2>
 
             <div className="flex">
-              <MagneticButton>
-                <Button className="group rounded-full bg-primary h-14 p-1 text-base font-medium text-white transition-all hover:bg-primary/80">
-                  <span className="px-6">Engage Made360Degrees</span>
-                  <div className="ml-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary transition-transform group-hover:translate-x-1">
-                    <ChevronRight className="h-5 w-5" />
-                  </div>
-                </Button>
-              </MagneticButton>
+              <Link href="/contact">
+                <MagneticButton>
+                  <Button className="group rounded-full bg-primary h-14 p-1 text-base font-medium text-white transition-all hover:bg-primary/80">
+                    <span className="px-6">Engage Made360Degrees</span>
+                    <div className="ml-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary transition-transform group-hover:translate-x-1">
+                      <ChevronRight className="h-5 w-5" />
+                    </div>
+                  </Button>
+                </MagneticButton>
+              </Link>
             </div>
           </div>
         </motion.div>
@@ -89,14 +113,14 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 border-b border-white/10 pb-16">
           {/* Logo & Socials */}
           <div className="md:col-span-4 space-y-8">
-            <div className="relative h-12 w-48">
+            <Link href="/" className="relative h-12 w-48 block">
               <Image
                 src="/images/logo_white.png"
                 alt="Made360Degrees"
                 fill
                 className="object-contain"
               />
-            </div>
+            </Link>
 
             <div className="flex gap-4">
               {socialLinks.map((social, idx) => (
@@ -133,7 +157,10 @@ const Footer = () => {
                   placeholder="Enter email"
                   className="w-full bg-black/50 border border-white/10 rounded-full h-14 px-6 focus:outline-none focus:border-primary transition-colors pr-16"
                 />
-                <button className="absolute right-2 top-2 h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white hover:scale-105 transition-transform active:scale-95">
+                <button
+                  type="submit"
+                  className="absolute right-2 top-2 h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white hover:scale-105 transition-transform active:scale-95"
+                >
                   <Send className="h-4 w-4" />
                 </button>
               </div>
@@ -150,11 +177,11 @@ const Footer = () => {
                 {group.links.map((link, lidx) => (
                   <li key={lidx}>
                     <Link
-                      href="#"
+                      href={link.href}
                       className="text-white/50 hover:text-white transition-colors text-sm flex items-center group"
                     >
                       <span className="w-0 group-hover:w-4 overflow-hidden transition-all duration-300 h-px bg-primary mr-0 group-hover:mr-2"></span>
-                      {link}
+                      {link.name}
                     </Link>
                   </li>
                 ))}
