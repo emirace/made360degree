@@ -14,8 +14,8 @@ const Transformation = () => {
   ];
 
   return (
-    <section className="bg-white min-h-screen flex p-8 overflow-hidden">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 w-full">
+    <section className="bg-white min-h-screen flex p-6 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-2 lg:px-8 w-full">
         <div className="grid grid-cols-1 gap-y-12 lg:grid-cols-2 lg:gap-x-16 items-center">
           <div className="relative w-full max-w-lg mx-auto lg:max-w-none group h-[400px] sm:h-[500px]">
             <RevealImage

@@ -78,20 +78,24 @@ const Navbar = () => {
                 <Youtube className="h-4 w-4" />
               </Link>
             </div>
-            <Button className="rounded-full bg-white px-6 font-bold text-black transition-all hover:scale-105 hover:bg-white/90">
-              Engage Made360Degrees
-            </Button>
+            <Link href="/book">
+              <Button className="rounded-full bg-white px-6 font-bold text-black transition-all hover:scale-105 hover:bg-white/90">
+                Engage Made360Degrees
+              </Button>
+            </Link>
           </div>
         </div>
 
         {/* Mobile Toggle */}
         <div className="flex items-center gap-4 lg:hidden">
-          <Button
-            className="rounded-full bg-white px-4 py-2 text-sm font-bold text-black md:px-6"
-            size="sm"
-          >
-            Engage
-          </Button>
+          <Link href="/book">
+            <Button
+              className="rounded-full bg-white px-4 py-2 text-sm font-bold text-black md:px-6"
+              size="sm"
+            >
+              Engage
+            </Button>
+          </Link>
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="rounded-full border border-white/10 bg-black/20 p-2 text-white backdrop-blur-md transition-all hover:bg-white/10"

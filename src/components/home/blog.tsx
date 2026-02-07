@@ -6,20 +6,41 @@ import Image from "next/image";
 import { ArrowLeft, ArrowRight, ChevronRight } from "lucide-react";
 import MagneticButton from "@/components/animations/magnetic-button";
 import { Button } from "@/components/ui/button";
-import { BLOG_POSTS } from "@/lib/blog-data";
 import Link from "next/link";
 
-const blogs = BLOG_POSTS.map((post, index) => ({
-  id: index + 1,
-  date: post.date,
-  title: post.title,
-  description: post.excerpt,
-  image: post.image,
-  slug: post.slug,
-  highlight: index === 0,
-}));
+interface BlogPost {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  readTime: string;
+  image: string;
+  tags: string[];
+  author: {
+    name: string;
+    role: string;
+    avatar: string;
+  };
+  publishedAt: string;
+  createdAt: string;
+}
 
-export default function Blog() {
+interface BlogProps {
+  blogs: BlogPost[];
+}
+
+export default function Blog({ blogs: initialBlogs }: BlogProps) {
+  const blogs = initialBlogs.map((post, index) => ({
+    id: post._id,
+    date: new Date(post.publishedAt || post.createdAt).toLocaleDateString(),
+    title: post.title,
+    description: post.excerpt,
+    image: post.image,
+    slug: post.slug,
+    highlight: index === 0,
+  }));
   const [scrollIndex, setScrollIndex] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 

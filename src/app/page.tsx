@@ -4,13 +4,18 @@ import Audience from "@/components/home/audience";
 import Journey from "@/components/home/journey";
 import Approach from "@/components/home/approach";
 import Blog from "@/components/home/blog";
+import { getAllBlogs } from "@/services/blog";
 import Events from "@/components/home/events";
 import Footer from "@/components/home/footer";
 import Navbar from "@/components/navbar";
+import { getUpcomingEvents } from "@/services/event";
 
-export default function Home() {
+export default async function Home() {
+  const blogs = await getAllBlogs();
+  const upcomingEvents = await getUpcomingEvents();
+
   return (
-    <main className="relative bg-black text-white">
+    <main className="relative bg-white font-outfit">
       <Navbar />
 
       <div className="relative z-10">
@@ -32,11 +37,11 @@ export default function Home() {
       </div>
 
       <div className="relative z-40 bg-white">
-        <Blog />
+        <Blog blogs={blogs} />
       </div>
 
       <div className="relative z-45 bg-white">
-        <Events />
+        <Events events={upcomingEvents} />
       </div>
 
       <div className="relative z-50">

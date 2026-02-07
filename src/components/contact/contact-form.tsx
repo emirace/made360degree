@@ -16,16 +16,72 @@ import { Button } from "@/components/ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 
+import { submitContact } from "@/services/contact";
+
 const ContactForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{
+    success?: boolean;
+    message?: string;
+  }>({});
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    // Simulate api call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsSubmitting(false);
-    alert("Message sent successfully!");
+    setSubmitStatus({});
+
+    try {
+      const result = await submitContact({
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+      });
+
+      if (result.success) {
+        setSubmitStatus({
+          success: true,
+          message:
+            "Thank you! Your message has been sent successfully. We'll get back to you soon.",
+        });
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          subject: "",
+          message: "",
+        });
+      } else {
+        setSubmitStatus({
+          success: false,
+          message:
+            result.error || "Something went wrong. Please try again later.",
+        });
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setSubmitStatus({
+        success: false,
+        message: "An unexpected error occurred. Please try again later.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -144,6 +200,9 @@ const ContactForm = () => {
                     First Name
                   </label>
                   <Input
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
                     placeholder="John"
                     className="h-14 rounded-2xl bg-white border-black/5 focus:border-primary/50 transition-all px-6"
                     required
@@ -154,6 +213,9 @@ const ContactForm = () => {
                     Last Name
                   </label>
                   <Input
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
                     placeholder="Doe"
                     className="h-14 rounded-2xl bg-white border-black/5 focus:border-primary/50 transition-all px-6"
                     required
@@ -164,6 +226,9 @@ const ContactForm = () => {
                     Email Address
                   </label>
                   <Input
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     type="email"
                     placeholder="john@example.com"
                     className="h-14 rounded-2xl bg-white border-black/5 focus:border-primary/50 transition-all px-6"
@@ -175,6 +240,9 @@ const ContactForm = () => {
                     Subject
                   </label>
                   <Input
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleChange}
                     placeholder="Inquiry about Leadership Coaching"
                     className="h-14 rounded-2xl bg-white border-black/5 focus:border-primary/50 transition-all px-6"
                     required
@@ -185,12 +253,28 @@ const ContactForm = () => {
                     Message
                   </label>
                   <Textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
                     placeholder="Tell us how we can help you..."
                     className="min-h-[160px] rounded-[32px] bg-white border-black/5 focus:border-primary/50 transition-all p-6 resize-none"
                     required
                   />
                 </div>
-                <div className="md:col-span-2 pt-4">
+                <div className="md:col-span-2 pt-4 space-y-4">
+                  {submitStatus.message && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className={`p-4 rounded-2xl text-sm font-medium ${
+                        submitStatus.success
+                          ? "bg-green-50 text-green-600 border border-green-100"
+                          : "bg-red-50 text-red-600 border border-red-100"
+                      }`}
+                    >
+                      {submitStatus.message}
+                    </motion.div>
+                  )}
                   <Button
                     disabled={isSubmitting}
                     className="w-full h-16 rounded-full bg-black text-white text-lg font-bold uppercase tracking-widest hover:bg-primary transition-all duration-300 shadow-xl shadow-black/10 group"

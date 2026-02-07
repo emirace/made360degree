@@ -3,6 +3,9 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/animations/smooth-scroll";
 import Noise from "@/components/ui/noise";
+import { Toaster } from "@/components/ui/sonner";
+
+import { Providers } from "@/components/providers";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
@@ -23,10 +26,13 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${outfit.variable} antialiased font-sans bg-black text-white`}
       >
-        <SmoothScroll>
-          <Noise />
-          {children}
-        </SmoothScroll>
+        <Providers>
+          <SmoothScroll>
+            <Noise />
+            {children}
+            <Toaster />
+          </SmoothScroll>
+        </Providers>
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
@@ -55,7 +56,7 @@ const Hero = () => {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 pt-20 md:pt-0"
         >
           <span className="text-sm font-medium tracking-[0.2em] text-primary uppercase">
             « <ScrambleText text="MADE360DEGREES" delay={0.5} /> »
@@ -95,12 +96,14 @@ const Hero = () => {
           className="flex flex-wrap items-center gap-6 mb-20"
         >
           <MagneticButton>
-            <Button className="group rounded-full bg-white h-12  p-1 text-base font-medium text-black transition-all hover:bg-white/90">
-              <span className="px-4">Engage Made360Degrees</span>
-              <div className="ml-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white transition-transform group-hover:translate-x-1">
-                <ChevronRight className="h-4 w-4" />
-              </div>
-            </Button>
+            <Link href="/book">
+              <Button className="group rounded-full bg-white h-12  p-1 text-base font-medium text-black transition-all hover:bg-white/90">
+                <span className="px-4">Engage Made360Degrees</span>
+                <div className="ml-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white transition-transform group-hover:translate-x-1">
+                  <ChevronRight className="h-4 w-4" />
+                </div>
+              </Button>
+            </Link>
           </MagneticButton>
           <MagneticButton>
             <button className="text-base font-semibold text-white transition-colors hover:text-primary">
