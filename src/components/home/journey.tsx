@@ -9,19 +9,19 @@ const journeySteps = [
     title: "Executive Coaching Engagement",
     description:
       "For Senior Leaders – Strengthens judgment, strategic thinking, and organizational influence.",
-    image: "/images/audience-executive.png",
+    image: "/images/audience.JPG",
   },
   {
     title: "Leadership Coaching Engagement",
     description:
       "For Emerging Leaders – Builds leadership confidence, communication, and career progression.",
-    image: "/images/audience-professional.png",
+    image: "/images/audience-professional.jpeg",
   },
   {
     title: "Organizational Leadership Development",
     description:
       "For SMEs – Enhances leadership capability, team alignment, and workplace culture.",
-    image: "/images/audience-sme.png",
+    image: "/images/service3.jpg",
   },
   {
     title: "Team Performance & Collaboration Intervention",
@@ -32,7 +32,7 @@ const journeySteps = [
     title: "Change & Transition Leadership Engagement",
     description:
       "Supports leaders navigating growth, restructuring, or cultural change.",
-    image: "/images/transformation-leader.png",
+    image: "/images/transformation-leader.jpeg",
   },
   {
     title: "Sales & Performance Leadership Engagement",

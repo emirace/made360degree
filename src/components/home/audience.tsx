@@ -10,7 +10,7 @@ const audiences = [
     title: "SMEs and Growing Organizations",
     description:
       "We support SMEs requiring structure, accountability, and capable leaders to scale sustainably.",
-    image: "/images/audience-sme.png",
+    image: "/images/org_engage.jpg",
     outcomes: [
       "Stronger leadership alignment",
       "Improved team performance",
@@ -21,7 +21,7 @@ const audiences = [
     title: "Professionals and Emerging Leaders",
     description:
       "We equip professionals who carry responsibility with clarity, confidence, and leadership presence to advance in their careers.",
-    image: "/images/audience-professional.png",
+    image: "/images/audience-professional2.jpeg",
     outcomes: [
       "Clear career direction",
       "Improved decision-making",
@@ -32,7 +32,7 @@ const audiences = [
     title: "Senior Leaders and Executives",
     description:
       "We support leaders managing growth, complexity, people, and change at scale.",
-    image: "/images/audience-executive.png",
+    image: "/images/audience-exec.jpeg",
     outcomes: [
       "Strategic clarity",
       "Improved leadership judgment",
