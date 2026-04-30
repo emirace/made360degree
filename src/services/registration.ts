@@ -4,6 +4,10 @@ import dbConnect from "@/lib/dbConnect";
 import Registration, { IRegistration } from "@/models/Registration";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
+import {
+  sendRegistrationApprovedEmail,
+  sendRegistrationRejectedEmail,
+} from "@/lib/mailer";
 
 async function isAdmin() {
   const session = await auth();
@@ -14,10 +18,12 @@ export async function createRegistration(data: {
   eventId: string;
   name: string;
   email: string;
+  phone?: string;
   amount: number;
-  paymentMethod: "card" | "offline";
+  paymentMethod: "card" | "manual_transfer";
   paymentStatus?: "pending" | "completed" | "failed";
   transactionId?: string;
+  receiptUrl?: string;
 }) {
   await dbConnect();
   try {
@@ -97,10 +103,45 @@ export async function updateRegistrationStatus(
       id,
       { paymentStatus: status },
       { new: true },
-    );
+    ).populate<{ eventId: { title: string; date: Date } }>("eventId", "title date");
+
     if (!registration)
       return { success: false, error: "Registration not found" };
+
     revalidatePath("/dashboard/events");
+
+    // Send email notification
+    try {
+      const eventTitle = (registration.eventId as any)?.title || "the event";
+      const eventDate = (registration.eventId as any)?.date
+        ? new Date((registration.eventId as any).date).toLocaleDateString("en-GB", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })
+        : "";
+
+      if (status === "completed") {
+        await sendRegistrationApprovedEmail({
+          to: registration.email,
+          name: registration.name,
+          eventTitle,
+          eventDate,
+          amount: registration.amount,
+        });
+      } else if (status === "failed") {
+        await sendRegistrationRejectedEmail({
+          to: registration.email,
+          name: registration.name,
+          eventTitle,
+        });
+      }
+    } catch (emailErr) {
+      // Non-fatal — log but don't fail the status update
+      console.error("Failed to send status email:", emailErr);
+    }
+
     return { success: true, data: JSON.parse(JSON.stringify(registration)) };
   } catch (error) {
     console.error("Error updating registration status:", error);

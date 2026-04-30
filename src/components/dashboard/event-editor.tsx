@@ -39,8 +39,8 @@ import {
   X,
   Calendar as CalendarIcon,
   MapPin,
-  Link as LinkIcon,
-  DollarSign,
+  CreditCard,
+  Landmark,
 } from "lucide-react";
 import { IEvent } from "@/models/Event";
 import { createEvent, updateEvent } from "@/services/event";
@@ -63,6 +63,10 @@ const eventSchema = z.object({
   status: z.enum(["upcoming", "past", "cancelled"]),
   isPaid: z.boolean(),
   price: z.string().min(0, "Price cannot be negative").optional(),
+  paymentMethod: z.enum(["gateway", "manual"]).optional(),
+  bankName: z.string().optional(),
+  accountName: z.string().optional(),
+  accountNumber: z.string().optional(),
   image: z.string().optional(),
 });
 
@@ -78,6 +82,12 @@ export interface PlainEvent {
   status: "upcoming" | "past" | "cancelled";
   isPaid: boolean;
   price?: string;
+  paymentMethod?: "gateway" | "manual";
+  bankDetails?: {
+    bankName: string;
+    accountName: string;
+    accountNumber: string;
+  };
 }
 
 interface EventEditorProps {
@@ -107,6 +117,10 @@ export function EventEditor({
       status: "upcoming",
       isPaid: false,
       price: "",
+      paymentMethod: "gateway",
+      bankName: "",
+      accountName: "",
+      accountNumber: "",
       image: "",
     },
   });
@@ -123,6 +137,10 @@ export function EventEditor({
         status: event.status,
         isPaid: event.isPaid || false,
         price: event.price ?? "",
+        paymentMethod: event.paymentMethod || "gateway",
+        bankName: event.bankDetails?.bankName || "",
+        accountName: event.bankDetails?.accountName || "",
+        accountNumber: event.bankDetails?.accountNumber || "",
         image: event.image || "",
       });
       setImagePreview(event.image || null);
@@ -135,6 +153,10 @@ export function EventEditor({
         status: "upcoming",
         isPaid: false,
         price: "",
+        paymentMethod: "gateway",
+        bankName: "",
+        accountName: "",
+        accountNumber: "",
         image: "",
       });
       setImagePreview(null);
@@ -147,7 +169,6 @@ export function EventEditor({
 
     setIsUploading(true);
     try {
-      // Convert to base64 for server action
       const base64 = await new Promise<string>((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result as string);
@@ -173,9 +194,23 @@ export function EventEditor({
     setLoading(true);
     try {
       const eventData: Partial<IEvent> = {
-        ...values,
-        price: Number(values.price),
+        title: values.title,
+        description: values.description,
         date: new Date(values.date),
+        location: values.location,
+        status: values.status,
+        isPaid: values.isPaid,
+        price: Number(values.price),
+        image: values.image,
+        paymentMethod: values.isPaid ? (values.paymentMethod || "gateway") : "gateway",
+        bankDetails:
+          values.isPaid && values.paymentMethod === "manual"
+            ? {
+                bankName: values.bankName || "",
+                accountName: values.accountName || "",
+                accountNumber: values.accountNumber || "",
+              }
+            : undefined,
       };
 
       const result = event
@@ -198,6 +233,9 @@ export function EventEditor({
       setLoading(false);
     }
   };
+
+  const isPaid = form.watch("isPaid");
+  const paymentMethod = form.watch("paymentMethod");
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -350,55 +388,203 @@ export function EventEditor({
                 )}
               />
 
-              <div className="p-4 bg-zinc-800/50 border border-zinc-700 rounded-lg space-y-4 md:col-span-2">
-                <div className="flex items-center justify-between">
-                  <FormField
-                    control={form.control}
-                    name="isPaid"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-center justify-between rounded-lg gap-4 space-y-0">
-                        <div className="space-y-0.5">
-                          <FormLabel className="text-base font-bold">
-                            Paid Event
-                          </FormLabel>
-                          <FormDescription className="text-zinc-500">
-                            Is this a premium event requires payment?
-                          </FormDescription>
-                        </div>
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
+              {/* ── Payment Section ── */}
+              <div className="p-4 bg-zinc-800/50 border border-zinc-700 rounded-lg space-y-5 md:col-span-2">
+                {/* isPaid toggle */}
+                <FormField
+                  control={form.control}
+                  name="isPaid"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg gap-4 space-y-0">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base font-bold">
+                          Paid Event
+                        </FormLabel>
+                        <FormDescription className="text-zinc-500">
+                          Is this a premium event that requires payment?
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
 
-                {form.watch("isPaid") && (
-                  <FormField
-                    control={form.control}
-                    name="price"
-                    render={({ field }) => (
-                      <FormItem className="animate-in fade-in slide-in-from-top-2 duration-300">
-                        <FormLabel>Ticket Price (₦)</FormLabel>
-                        <FormControl>
-                          <div className="relative">
-                            <span className="absolute left-3 top-2.5 flex items-center justify-center text-zinc-500 font-bold">
-                              ₦
-                            </span>
-                            <Input
-                              {...field}
-                              type="number"
-                              className="bg-zinc-800 border-zinc-700 text-white pl-10"
-                            />
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                {isPaid && (
+                  <div className="space-y-5 animate-in fade-in slide-in-from-top-2 duration-300">
+                    {/* Price */}
+                    <FormField
+                      control={form.control}
+                      name="price"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Ticket Price (₦)</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <span className="absolute left-3 top-2.5 flex items-center justify-center text-zinc-500 font-bold">
+                                ₦
+                              </span>
+                              <Input
+                                {...field}
+                                type="number"
+                                className="bg-zinc-800 border-zinc-700 text-white pl-10"
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Payment Method */}
+                    <div>
+                      <FormLabel className="text-sm font-semibold text-zinc-300 mb-3 block">
+                        Payment Method
+                      </FormLabel>
+                      <FormField
+                        control={form.control}
+                        name="paymentMethod"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <div className="grid grid-cols-2 gap-3">
+                                {/* Gateway option */}
+                                <button
+                                  type="button"
+                                  onClick={() => field.onChange("gateway")}
+                                  className={cn(
+                                    "flex items-center gap-3 p-4 rounded-lg border-2 transition-all text-left",
+                                    field.value === "gateway"
+                                      ? "border-primary bg-primary/10 text-white"
+                                      : "border-zinc-700 bg-zinc-800/50 text-zinc-400 hover:border-zinc-500",
+                                  )}
+                                >
+                                  <CreditCard
+                                    className={cn(
+                                      "h-5 w-5 shrink-0",
+                                      field.value === "gateway"
+                                        ? "text-primary"
+                                        : "text-zinc-500",
+                                    )}
+                                  />
+                                  <div>
+                                    <p className="font-semibold text-sm">
+                                      Payment Gateway
+                                    </p>
+                                    <p className="text-xs text-zinc-500 mt-0.5">
+                                      Card, USSD, bank transfer
+                                    </p>
+                                  </div>
+                                </button>
+
+                                {/* Manual option */}
+                                <button
+                                  type="button"
+                                  onClick={() => field.onChange("manual")}
+                                  className={cn(
+                                    "flex items-center gap-3 p-4 rounded-lg border-2 transition-all text-left",
+                                    field.value === "manual"
+                                      ? "border-amber-500 bg-amber-500/10 text-white"
+                                      : "border-zinc-700 bg-zinc-800/50 text-zinc-400 hover:border-zinc-500",
+                                  )}
+                                >
+                                  <Landmark
+                                    className={cn(
+                                      "h-5 w-5 shrink-0",
+                                      field.value === "manual"
+                                        ? "text-amber-500"
+                                        : "text-zinc-500",
+                                    )}
+                                  />
+                                  <div>
+                                    <p className="font-semibold text-sm">
+                                      Manual Transfer
+                                    </p>
+                                    <p className="text-xs text-zinc-500 mt-0.5">
+                                      Bank account details
+                                    </p>
+                                  </div>
+                                </button>
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {/* Bank Details – shown only when manual is selected */}
+                    {paymentMethod === "manual" && (
+                      <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 p-4 bg-amber-500/5 border border-amber-500/20 rounded-lg">
+                        <p className="text-xs text-amber-400 font-medium uppercase tracking-wider">
+                          Bank Account Details
+                        </p>
+                        <div className="grid grid-cols-1 gap-4">
+                          <FormField
+                            control={form.control}
+                            name="bankName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-zinc-300">
+                                  Bank Name
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    placeholder="e.g. First Bank Nigeria"
+                                    className="bg-zinc-800 border-zinc-700 text-white"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="accountName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-zinc-300">
+                                  Account Name
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    placeholder="e.g. Made360 Leadership Ltd"
+                                    className="bg-zinc-800 border-zinc-700 text-white"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="accountNumber"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-zinc-300">
+                                  Account Number
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    {...field}
+                                    placeholder="e.g. 0123456789"
+                                    className="bg-zinc-800 border-zinc-700 text-white"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      </div>
                     )}
-                  />
+                  </div>
                 )}
               </div>
 

@@ -68,10 +68,6 @@ export default function EventListClient({
   };
 
   const refreshEvents = async () => {
-    // In a real app, we'd refetch from the server action here,
-    // but for simplicity, we can let revalidatePath handle the next page load.
-    // For immediate UI update, we provide this prop to EventEditor to close and potentially we could update local state.
-    // Since we want the user to see the change immediately:
     window.location.reload();
   };
 
@@ -127,8 +123,7 @@ export default function EventListClient({
                   <TableCell>
                     {event.isPaid ? (
                       <span className="text-emerald-500 font-medium flex items-center gap-1">
-                        <DollarSign size={12} />
-                        {event.price}
+                        ₦{event.price}
                       </span>
                     ) : (
                       <span className="text-zinc-500">Free</span>
