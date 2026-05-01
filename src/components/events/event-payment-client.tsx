@@ -58,6 +58,7 @@ export function EventPaymentClient({
 
   const amount = event.price || 0;
   const isManual = event.paymentMethod === "manual";
+  const isPast = new Date(event.date) < new Date(new Date().setHours(0, 0, 0, 0));
 
   // ── Flutterwave config (used only for gateway events) ──
   const config = {
@@ -257,21 +258,24 @@ export function EventPaymentClient({
                       placeholder="Full Name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="bg-zinc-50 border-zinc-200 text-black"
+                      disabled={isPast}
+                      className="bg-zinc-50 border-zinc-200 text-black disabled:opacity-70"
                     />
                     <Input
                       placeholder="Email Address"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="bg-zinc-50 border-zinc-200 text-black"
+                      disabled={isPast}
+                      className="bg-zinc-50 border-zinc-200 text-black disabled:opacity-70"
                     />
                     <Input
                       placeholder="Phone Number (optional)"
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="bg-zinc-50 border-zinc-200 text-black md:col-span-2"
+                      disabled={isPast}
+                      className="bg-zinc-50 border-zinc-200 text-black md:col-span-2 disabled:opacity-70"
                     />
                   </div>
                 </div>
@@ -321,14 +325,28 @@ export function EventPaymentClient({
                 </div>
 
                 {/* CTA Button */}
-                <Button
-                  onClick={
-                    isManual ? handleOpenManualModal : handleGatewayPayment
-                  }
-                  className="w-full bg-primary text-white font-bold h-14 text-lg rounded-lg shadow-lg"
-                >
-                  Confirm Registration & Pay
-                </Button>
+                {isPast ? (
+                  <div className="space-y-4">
+                    <Button
+                      disabled
+                      className="w-full bg-zinc-200 text-zinc-500 font-bold h-14 text-lg rounded-lg cursor-not-allowed"
+                    >
+                      Registration Closed
+                    </Button>
+                    <p className="text-center text-sm text-red-500 font-medium">
+                      This event has already taken place. Registration is no longer available.
+                    </p>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={
+                      isManual ? handleOpenManualModal : handleGatewayPayment
+                    }
+                    className="w-full bg-primary text-white font-bold h-14 text-lg rounded-lg shadow-lg"
+                  >
+                    Confirm Registration & Pay
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>

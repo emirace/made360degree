@@ -25,7 +25,7 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "6 min read",
     image: "/images/audience-executive.png",
     author: {
-      name: "Mr. Kelvin Dada",
+      name: "Mr. Kevin Dada",
       role: "Principal Coach",
       avatar: "/images/visionary.jpeg",
     },
@@ -56,7 +56,7 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "5 min read",
     image: "/images/leadership-collaboration.png",
     author: {
-      name: "Mr. Kelvin Dada",
+      name: "Mr. Kevin Dada",
       role: "Principal Coach",
       avatar: "/images/visionary.jpeg",
     },
@@ -82,7 +82,7 @@ export const BLOG_POSTS: BlogPost[] = [
     readTime: "8 min read",
     image: "/images/audience-professional.png",
     author: {
-      name: "Mr. Kelvin Dada",
+      name: "Mr. Kevin Dada",
       role: "Principal Coach",
       avatar: "/images/visionary.jpeg",
     },

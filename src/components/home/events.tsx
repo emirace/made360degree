@@ -175,12 +175,14 @@ export default function Events({ events }: EventsProps) {
 
         <div className="md:mt-10 flex justify-center">
           <MagneticButton>
-            <Button className="group rounded-full bg-primary h-14 p-1 text-lg font-medium text-white transition-all hover:bg-primary/90 shadow-2xl">
-              <span className="px-6">View All Events</span>
-              <div className="ml-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary transition-transform group-hover:translate-x-1">
-                <ChevronRight className="h-5 w-5" />
-              </div>
-            </Button>
+            <Link href="/events">
+              <Button className="group rounded-full bg-primary h-14 p-1 text-lg font-medium text-white transition-all hover:bg-primary/90 shadow-2xl">
+                <span className="px-6">View All Events</span>
+                <div className="ml-3 flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary transition-transform group-hover:translate-x-1">
+                  <ChevronRight className="h-5 w-5" />
+                </div>
+              </Button>
+            </Link>
           </MagneticButton>
         </div>
       </div>

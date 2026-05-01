@@ -85,7 +85,7 @@ export function BlogEditor({
       category: "",
       readTime: "",
       author: {
-        name: "Mr. Kelvin Dada",
+        name: "Mr. Kevin Dada",
         role: "Principal Coach",
         avatar: "/images/visionary.jpeg",
       },
@@ -103,7 +103,7 @@ export function BlogEditor({
         category: blog.category || "",
         readTime: blog.readTime || "",
         author: {
-          name: blog.author?.name || "Mr. Kelvin Dada",
+          name: blog.author?.name || "Mr. Kevin Dada",
           role: blog.author?.role || "Principal Coach",
           avatar: blog.author?.avatar || "/images/visionary.jpeg",
         },
@@ -119,7 +119,7 @@ export function BlogEditor({
         category: "",
         readTime: "",
         author: {
-          name: "Mr. Kelvin Dada",
+          name: "Mr. Kevin Dada",
           role: "Principal Coach",
           avatar: "/images/visionary.jpeg",
         },

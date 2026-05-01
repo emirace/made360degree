@@ -51,7 +51,7 @@ const Founder = () => {
             >
               <Image
                 src="/images/visionary.jpeg"
-                alt="Mr. Kelvin Dada"
+                alt="Mr. Kevin Dada"
                 fill
                 className="object-cover "
               />
@@ -64,7 +64,7 @@ const Founder = () => {
                     Founder & Principal Coach
                   </p>
                 </div>
-                <h3 className="text-2xl font-bold mt-2">Mr. Kelvin Dada</h3>
+                <h3 className="text-2xl font-bold mt-2">Mr. Kevin Dada</h3>
               </div>
             </motion.div>
 
@@ -112,7 +112,7 @@ const Founder = () => {
               className="space-y-6 text-white/70 leading-relaxed text-base font-light"
             >
               <p>
-                <span className="text-white font-medium">Mr. Kelvin Dada</span>{" "}
+                <span className="text-white font-medium">Mr. Kevin Dada</span>{" "}
                 is a visionary strategist and mentor with over a decade of
                 experience across the UK and Nigeria. His career spans{" "}
                 <span className="text-white font-medium">
@@ -125,8 +125,8 @@ const Founder = () => {
                 <span className="text-white italic">
                   clarity, discipline, and courage
                 </span>
-                , Kelvin combines practical experience with formal credentials
-                to shape emerging leaders.
+                , Kevin combines practical experience with formal credentials to
+                shape emerging leaders.
               </p>
             </motion.div>
 
