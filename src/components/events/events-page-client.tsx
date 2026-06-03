@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { stripHtml } from "@/lib/rich-text";
+import { getEventPrice } from "@/lib/event-pricing";
 
 type ActiveFilter = "all" | "upcoming" | "past" | "free" | "premium";
 
@@ -40,6 +41,7 @@ interface Event {
   status: "upcoming" | "past" | "cancelled";
   isPaid: boolean;
   price?: number;
+  earlyBirdFee?: number;
   paymentMethod?: "gateway" | "manual";
 }
 
@@ -59,6 +61,7 @@ function EventCard({
 }) {
   const isUpcoming = event.status === "upcoming";
   const eventDate = new Date(event.date);
+  const pricing = getEventPrice(event);
   const daysUntil = Math.ceil(
     (eventDate.getTime() - currentTime) / (1000 * 60 * 60 * 24),
   );
@@ -109,13 +112,13 @@ function EventCard({
         </div>
 
         {/* Price overlay */}
-        {event.isPaid && event.price && (
+        {event.isPaid && pricing.amount > 0 && (
           <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm rounded-xl px-3 py-2 shadow-lg">
             <p className="text-xs text-zinc-500 font-medium leading-none mb-0.5">
-              Fee
+              {pricing.hasEarlyBirdFee ? "Early Bird" : "Fee"}
             </p>
             <p className="text-base font-bold text-zinc-900 leading-none">
-              ₦{event.price.toLocaleString()}
+              ₦{pricing.amount.toLocaleString()}
             </p>
           </div>
         )}
@@ -145,6 +148,17 @@ function EventCard({
           </p>
         </div>
 
+        {event.isPaid && pricing.hasEarlyBirdFee && (
+          <div className="flex items-center justify-between rounded-lg bg-emerald-50 px-3 py-2 text-xs">
+            <span className="font-bold text-emerald-700">
+              Early Bird ₦{pricing.amount.toLocaleString()}
+            </span>
+            <span className="font-medium text-zinc-400 line-through">
+              ₦{pricing.regularPrice.toLocaleString()}
+            </span>
+          </div>
+        )}
+
         {/* Payment method hint */}
         {event.isPaid && event.paymentMethod && (
           <div className="flex items-center gap-1.5 text-xs text-zinc-400">
@@ -171,7 +185,7 @@ function EventCard({
             >
               <Link href={`/events/${event._id}`}>
                 {event.isPaid
-                  ? `Book Seat — ₦${(event.price || 0).toLocaleString()}`
+                  ? `Book Seat — ₦${pricing.amount.toLocaleString()}`
                   : "Register Now"}
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
               </Link>
@@ -205,8 +219,8 @@ export default function EventsPageClient({
     // Filter by category
     if (activeFilter === "upcoming" && type !== "upcoming") return [];
     if (activeFilter === "past" && type !== "past") return [];
-    if (activeFilter === "free") result = result.filter(e => !e.isPaid);
-    if (activeFilter === "premium") result = result.filter(e => e.isPaid);
+    if (activeFilter === "free") result = result.filter((e) => !e.isPaid);
+    if (activeFilter === "premium") result = result.filter((e) => e.isPaid);
 
     // Filter by search
     if (search.trim()) {
@@ -241,7 +255,7 @@ export default function EventsPageClient({
         </div>
 
         {/* Decorative glow */}
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary/20 rounded-full blur-[120px] z-0" />
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-150 h-75 bg-primary/20 rounded-full blur-[120px] z-0" />
 
         <div className="container relative z-10 mx-auto px-6 max-w-4xl text-center">
           <motion.div

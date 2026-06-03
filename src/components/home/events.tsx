@@ -14,6 +14,7 @@ import MagneticButton from "@/components/animations/magnetic-button";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { stripHtml } from "@/lib/rich-text";
+import { getEventPrice } from "@/lib/event-pricing";
 
 interface HomeEvent {
   _id: string;
@@ -24,6 +25,7 @@ interface HomeEvent {
   image?: string;
   isPaid?: boolean;
   price?: number;
+  earlyBirdFee?: number;
 }
 
 interface EventsProps {
@@ -99,11 +101,14 @@ export default function Events({ events }: EventsProps) {
               scrollPaddingRight: "24px",
             }}
           >
-            {events.map((event) => (
-              <div
-                key={event._id}
-                className="flex-none w-75 md:w-100 aspect-4/5 relative rounded-lg overflow-hidden group shadow-2xl snap-center first:ml-6 last:mr-6"
-              >
+            {events.map((event) => {
+              const pricing = getEventPrice(event);
+
+              return (
+                <div
+                  key={event._id}
+                  className="flex-none w-75 md:w-100 aspect-4/5 relative rounded-lg overflow-hidden group shadow-2xl snap-center first:ml-6 last:mr-6"
+                >
                 <Image
                   src={event.image || "/images/audience-executive.png"}
                   alt={event.title}
@@ -125,6 +130,17 @@ export default function Events({ events }: EventsProps) {
                       {stripHtml(event.description)}
                     </p>
 
+                    {event.isPaid && pricing.hasEarlyBirdFee && (
+                      <div className="mx-auto flex w-fit items-center gap-2 rounded-full bg-white/90 px-3 py-1 text-xs font-bold">
+                        <span className="text-emerald-700">
+                          Early Bird ₦{pricing.amount.toLocaleString()}
+                        </span>
+                        <span className="text-zinc-400 line-through">
+                          ₦{pricing.regularPrice.toLocaleString()}
+                        </span>
+                      </div>
+                    )}
+
                     <div className="pt-8">
                       <Button
                         className="rounded-full border border-white/30 bg-transparent px-8 py-6 text-base font-medium text-white transition-all hover:bg-white hover:text-black"
@@ -132,7 +148,7 @@ export default function Events({ events }: EventsProps) {
                       >
                         <Link href={`/events/${event._id}`}>
                           {event.isPaid
-                            ? `Book Seat - ₦${(event.price || 0).toLocaleString()}`
+                            ? `Book Seat - ₦${pricing.amount.toLocaleString()}`
                             : "Register Now"}
                         </Link>
                       </Button>
@@ -151,12 +167,17 @@ export default function Events({ events }: EventsProps) {
                   {event.isPaid && (
                     <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-emerald-600 mt-1">
                       <Banknote className="h-3 w-3" />
-                      <span>Premium Event</span>
+                      <span>
+                        {pricing.hasEarlyBirdFee
+                          ? `Early Bird ₦${pricing.amount.toLocaleString()}`
+                          : "Premium Event"}
+                      </span>
                     </div>
                   )}
                 </div>
               </div>
-            ))}
+              );
+            })}
             {events.length === 0 && (
               <div className="w-full text-center py-20 text-zinc-400">
                 Stay tuned for our upcoming leadership sessions.

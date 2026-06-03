@@ -16,6 +16,7 @@ export interface IEvent extends Document {
   status: "upcoming" | "past" | "cancelled";
   isPaid: boolean;
   price?: number;
+  earlyBirdFee?: number | null;
   paymentMethod: "gateway" | "manual";
   bankDetails?: IBankDetails;
   createdAt: Date;
@@ -32,6 +33,7 @@ const EventSchema: Schema = new Schema(
     images: [{ type: String }],
     isPaid: { type: Boolean, default: false },
     price: { type: Number },
+    earlyBirdFee: { type: Number },
     paymentMethod: {
       type: String,
       enum: ["gateway", "manual"],

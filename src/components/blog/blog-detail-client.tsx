@@ -126,7 +126,7 @@ export function BlogDetailClient({ post }: BlogDetailClientProps) {
                     prose-headings:font-bold prose-headings:tracking-tight 
                     prose-p:text-black/70 prose-p:leading-relaxed
                     prose-blockquote:italic prose-blockquote:border-l-primary prose-blockquote:bg-primary/5 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:rounded-r-2xl
-                    prose-img:rounded-[30px] prose-img:shadow-2xl prose-img:mx-auto prose-img:max-h-[400px] prose-img:w-full prose-img:object-cover"
+                    prose-img:rounded-[30px] prose-img:shadow-2xl prose-img:mx-auto prose-img:max-h-100 prose-img:w-full prose-img:object-cover"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
 

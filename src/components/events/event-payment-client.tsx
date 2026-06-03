@@ -34,6 +34,7 @@ import { toast } from "sonner";
 import { uploadFile } from "@/services/client-upload";
 import { useRouter } from "next/navigation";
 import { normalizeRichTextHtml } from "@/lib/rich-text";
+import { getEventPrice } from "@/lib/event-pricing";
 
 interface EventPaymentClientProps {
   event: IEvent;
@@ -42,6 +43,42 @@ interface EventPaymentClientProps {
 
 function isCloudinaryImage(src?: string) {
   return src?.startsWith("https://res.cloudinary.com/") ?? false;
+}
+
+function EventPriceDisplay({
+  pricing,
+}: {
+  pricing: ReturnType<typeof getEventPrice>;
+}) {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-wider text-emerald-700">
+            {pricing.hasEarlyBirdFee ? "Early Bird Fee" : "Fee"}
+          </p>
+          <p className="text-2xl font-bold text-emerald-900">
+            ₦{pricing.amount.toLocaleString()}
+          </p>
+        </div>
+        {pricing.hasEarlyBirdFee && (
+          <span className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
+            Active
+          </span>
+        )}
+      </div>
+      {pricing.hasEarlyBirdFee && (
+        <div className="flex items-center justify-between gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3">
+          <span className="text-sm font-medium text-zinc-500">
+            Regular Fee
+          </span>
+          <span className="text-base font-semibold text-zinc-500 line-through">
+            ₦{pricing.regularPrice.toLocaleString()}
+          </span>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function EventPaymentClient({
@@ -67,7 +104,8 @@ export function EventPaymentClient({
   const [isPaymentButtonVisible, setIsPaymentButtonVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  const amount = event.price || 0;
+  const pricing = getEventPrice(event);
+  const amount = pricing.amount;
   const isManual = event.paymentMethod === "manual";
   const isPast =
     new Date(event.date) < new Date(new Date().setHours(0, 0, 0, 0));
@@ -397,7 +435,8 @@ export function EventPaymentClient({
                   <Label className="text-base font-bold text-zinc-900">
                     Registration Fee:
                   </Label>
-                  <div className="relative">
+                  <EventPriceDisplay pricing={pricing} />
+                  <div className="hidden">
                     <div className="flex items-center gap-3 p-4 bg-zinc-50 border border-zinc-200 rounded-lg">
                       <div className="flex h-10 w-12 items-center justify-center rounded-full bg-emerald-600 text-white font-bold text-xs">
                         NGN
@@ -406,6 +445,12 @@ export function EventPaymentClient({
                         {amount.toLocaleString()}
                       </span>
                     </div>
+                    {pricing.hasEarlyBirdFee && (
+                      <p className="mt-2 text-sm text-emerald-700">
+                        Early bird fee applied. Regular fee: ₦
+                        {pricing.regularPrice.toLocaleString()}.
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -599,7 +644,8 @@ export function EventPaymentClient({
                 </DialogHeader>
 
                 {/* Amount to pay */}
-                <div className="flex items-center justify-between p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                <EventPriceDisplay pricing={pricing} />
+                <div className="hidden">
                   <span className="text-sm font-medium text-amber-700">
                     Amount to Transfer
                   </span>
@@ -607,6 +653,12 @@ export function EventPaymentClient({
                     ₦{amount.toLocaleString()}
                   </span>
                 </div>
+                {false && pricing.hasEarlyBirdFee && (
+                  <p className="text-sm text-emerald-700">
+                    Early bird fee applied. Regular fee: ₦
+                    {pricing.regularPrice.toLocaleString()}.
+                  </p>
+                )}
 
                 {/* Bank Details */}
                 {event.bankDetails ? (

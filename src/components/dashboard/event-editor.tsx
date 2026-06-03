@@ -67,6 +67,7 @@ const eventSchema = z.object({
   status: z.enum(["upcoming", "past", "cancelled"]),
   isPaid: z.boolean(),
   price: z.string().min(0, "Price cannot be negative").optional(),
+  earlyBirdFee: z.string().min(0, "Early bird fee cannot be negative").optional(),
   paymentMethod: z.enum(["gateway", "manual"]).optional(),
   bankName: z.string().optional(),
   accountName: z.string().optional(),
@@ -87,7 +88,8 @@ export interface PlainEvent {
   images?: string[];
   status: "upcoming" | "past" | "cancelled";
   isPaid: boolean;
-  price?: string;
+  price?: string | number;
+  earlyBirdFee?: string | number | null;
   paymentMethod?: "gateway" | "manual";
   bankDetails?: {
     bankName: string;
@@ -123,6 +125,7 @@ export function EventEditor({
       status: "upcoming",
       isPaid: false,
       price: "",
+      earlyBirdFee: "",
       paymentMethod: "gateway",
       bankName: "",
       accountName: "",
@@ -163,7 +166,9 @@ export function EventEditor({
         location: event.location,
         status: event.status,
         isPaid: event.isPaid || false,
-        price: event.price ?? "",
+        price: event.price !== undefined ? String(event.price) : "",
+        earlyBirdFee:
+          event.earlyBirdFee != null ? String(event.earlyBirdFee) : "",
         paymentMethod: event.paymentMethod || "gateway",
         bankName: event.bankDetails?.bankName || "",
         accountName: event.bankDetails?.accountName || "",
@@ -181,6 +186,7 @@ export function EventEditor({
         status: "upcoming",
         isPaid: false,
         price: "",
+        earlyBirdFee: "",
         paymentMethod: "gateway",
         bankName: "",
         accountName: "",
@@ -250,6 +256,9 @@ export function EventEditor({
     setLoading(true);
     try {
       const images = values.images || [];
+      const earlyBirdFee = values.earlyBirdFee
+        ? Number(values.earlyBirdFee)
+        : undefined;
 
       const eventData: Partial<IEvent> = {
         title: values.title,
@@ -259,6 +268,8 @@ export function EventEditor({
         status: values.status,
         isPaid: values.isPaid,
         price: Number(values.price),
+        earlyBirdFee:
+          values.isPaid && earlyBirdFee !== undefined ? earlyBirdFee : null,
         image: images[0] || "",
         images,
         paymentMethod: values.isPaid ? (values.paymentMethod || "gateway") : "gateway",
@@ -499,6 +510,34 @@ export function EventEditor({
                               />
                             </div>
                           </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="earlyBirdFee"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Early Bird Fee (optional)</FormLabel>
+                          <FormControl>
+                            <div className="relative">
+                              <span className="absolute left-3 top-2.5 flex items-center justify-center text-zinc-500 font-bold">
+                                ₦
+                              </span>
+                              <Input
+                                {...field}
+                                type="number"
+                                min="0"
+                                placeholder="Leave empty to disable early bird pricing"
+                                className="bg-zinc-800 border-zinc-700 text-white pl-10"
+                              />
+                            </div>
+                          </FormControl>
+                          <FormDescription className="text-zinc-500">
+                            If set, attendees will pay this amount instead of the regular ticket price.
+                          </FormDescription>
                           <FormMessage />
                         </FormItem>
                       )}

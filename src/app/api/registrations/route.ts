@@ -6,6 +6,14 @@ import {
 } from "@/lib/mailer";
 import Event from "@/models/Event";
 import dbConnect from "@/lib/dbConnect";
+import { getEventPrice } from "@/lib/event-pricing";
+
+interface RegistrationEvent {
+  title?: string;
+  date?: string | Date;
+  price?: number;
+  earlyBirdFee?: number;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,19 +23,27 @@ export async function POST(request: NextRequest) {
       name,
       email,
       phone,
-      amount,
       paymentMethod,
       transactionId,
       paymentStatus,
       receiptUrl,
     } = body;
 
-    if (!eventId || !name || !email || !amount || !paymentMethod) {
+    if (!eventId || !name || !email || !paymentMethod) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 },
       );
     }
+
+    await dbConnect();
+    const event = await Event.findById(eventId).lean<RegistrationEvent>();
+
+    if (!event) {
+      return NextResponse.json({ error: "Event not found" }, { status: 404 });
+    }
+
+    const amount = getEventPrice(event).amount;
 
     const result = await createRegistration({
       eventId,
@@ -47,8 +63,6 @@ export async function POST(request: NextRequest) {
 
     // ── Send email notifications (non-fatal) ──────────────────────────────
     try {
-      await dbConnect();
-      const event = await Event.findById(eventId).lean() as any;
       const eventTitle = event?.title || "the event";
       const eventDate = event?.date
         ? new Date(event.date).toLocaleDateString("en-GB", {
