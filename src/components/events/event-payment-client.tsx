@@ -301,7 +301,7 @@ export function EventPaymentClient({
             <CardContent className="p-0 space-y-6">
               <div>
                 <div
-                  className="prose prose-lg prose-primary max-w-none w-full 
+                  className="prose prose-base prose-primary max-w-none w-full 
                     prose-headings:font-bold prose-headings:tracking-tight 
                     prose-p:text-black/70 prose-p:leading-relaxed
                     prose-blockquote:italic prose-blockquote:border-l-primary prose-blockquote:bg-primary/5 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:rounded-r-2xl
@@ -341,7 +341,7 @@ export function EventPaymentClient({
                             ? "(min-width: 1024px) 66vw, 100vw"
                             : "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                         }
-                        className="object-cover"
+                        className="object-contain"
                       />
                     </div>
                   ))}
