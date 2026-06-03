@@ -1,7 +1,11 @@
 "use server";
 
-import cloudinary from "@/lib/cloudinary";
 import { auth } from "@/lib/auth";
+import {
+  MAX_UPLOAD_SIZE_LABEL,
+  isWithinUploadLimit,
+  uploadBase64ToCloudinary,
+} from "@/lib/cloudinary-upload";
 
 export async function uploadImage(
   fileBase64: string,
@@ -12,11 +16,12 @@ export async function uploadImage(
     return { success: false, error: "Unauthorized" };
   }
 
+  if (!isWithinUploadLimit(fileBase64)) {
+    return { success: false, error: `File too large. Max ${MAX_UPLOAD_SIZE_LABEL}.` };
+  }
+
   try {
-    const uploadResponse = await cloudinary.uploader.upload(fileBase64, {
-      folder: folder,
-      resource_type: "auto",
-    });
+    const uploadResponse = await uploadBase64ToCloudinary(fileBase64, folder);
 
     return {
       success: true,
@@ -33,11 +38,12 @@ export async function uploadImagePublic(
   fileBase64: string,
   folder: string = "made360/receipts",
 ) {
+  if (!isWithinUploadLimit(fileBase64)) {
+    return { success: false, error: `File too large. Max ${MAX_UPLOAD_SIZE_LABEL}.` };
+  }
+
   try {
-    const uploadResponse = await cloudinary.uploader.upload(fileBase64, {
-      folder: folder,
-      resource_type: "auto",
-    });
+    const uploadResponse = await uploadBase64ToCloudinary(fileBase64, folder);
 
     return {
       success: true,

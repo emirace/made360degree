@@ -18,7 +18,17 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { stripHtml } from "@/lib/rich-text";
+
+type ActiveFilter = "all" | "upcoming" | "past" | "free" | "premium";
+
+const eventFilters: { id: ActiveFilter; label: string }[] = [
+  { id: "all", label: "All Events" },
+  { id: "upcoming", label: "Upcoming" },
+  { id: "past", label: "Past" },
+  { id: "free", label: "Free" },
+  { id: "premium", label: "Premium" },
+];
 
 interface Event {
   _id: string;
@@ -38,11 +48,19 @@ interface EventsPageClientProps {
   past: Event[];
 }
 
-function EventCard({ event, index }: { event: Event; index: number }) {
+function EventCard({
+  event,
+  index,
+  currentTime,
+}: {
+  event: Event;
+  index: number;
+  currentTime: number;
+}) {
   const isUpcoming = event.status === "upcoming";
   const eventDate = new Date(event.date);
   const daysUntil = Math.ceil(
-    (eventDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+    (eventDate.getTime() - currentTime) / (1000 * 60 * 60 * 24),
   );
 
   return (
@@ -123,7 +141,7 @@ function EventCard({ event, index }: { event: Event; index: number }) {
             {event.title}
           </h3>
           <p className="text-sm text-zinc-500 mt-1.5 line-clamp-2 leading-relaxed">
-            {event.description}
+            {stripHtml(event.description)}
           </p>
         </div>
 
@@ -178,7 +196,8 @@ export default function EventsPageClient({
   past,
 }: EventsPageClientProps) {
   const [search, setSearch] = useState("");
-  const [activeFilter, setActiveFilter] = useState<"all" | "upcoming" | "past" | "free" | "premium">("all");
+  const [activeFilter, setActiveFilter] = useState<ActiveFilter>("all");
+  const [currentTime] = useState(() => Date.now());
 
   const filter = (arr: Event[], type: "upcoming" | "past") => {
     let result = arr;
@@ -285,16 +304,10 @@ export default function EventsPageClient({
             </div>
 
             <div className="flex flex-wrap justify-center gap-2">
-              {[
-                { id: "all", label: "All Events" },
-                { id: "upcoming", label: "Upcoming" },
-                { id: "past", label: "Past" },
-                { id: "free", label: "Free" },
-                { id: "premium", label: "Premium" },
-              ].map((f) => (
+              {eventFilters.map((f) => (
                 <button
                   key={f.id}
-                  onClick={() => setActiveFilter(f.id as any)}
+                  onClick={() => setActiveFilter(f.id)}
                   className={`px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 border ${
                     activeFilter === f.id
                       ? "bg-primary border-primary text-white shadow-lg shadow-primary/20"
@@ -338,7 +351,12 @@ export default function EventsPageClient({
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredUpcoming.map((event, i) => (
-                  <EventCard key={event._id} event={event} index={i} />
+                  <EventCard
+                    key={event._id}
+                    event={event}
+                    index={i}
+                    currentTime={currentTime}
+                  />
                 ))}
               </div>
             </div>
@@ -362,7 +380,12 @@ export default function EventsPageClient({
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-80">
                 {filteredPast.map((event, i) => (
-                  <EventCard key={event._id} event={event} index={i} />
+                  <EventCard
+                    key={event._id}
+                    event={event}
+                    index={i}
+                    currentTime={currentTime}
+                  />
                 ))}
               </div>
             </div>

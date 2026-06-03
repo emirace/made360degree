@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,7 +25,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -44,7 +44,7 @@ import {
 } from "lucide-react";
 import { IEvent } from "@/models/Event";
 import { createEvent, updateEvent } from "@/services/event";
-import { uploadImage } from "@/services/upload";
+import { uploadFile } from "@/services/client-upload";
 import Image from "next/image";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
@@ -54,6 +54,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { normalizeRichTextHtml } from "@/lib/rich-text";
+import "react-quill-new/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 const eventSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -68,6 +72,7 @@ const eventSchema = z.object({
   accountName: z.string().optional(),
   accountNumber: z.string().optional(),
   image: z.string().optional(),
+  images: z.array(z.string()).optional(),
 });
 
 type EventFormValues = z.infer<typeof eventSchema>;
@@ -79,6 +84,7 @@ export interface PlainEvent {
   date: string;
   location: string;
   image?: string;
+  images?: string[];
   status: "upcoming" | "past" | "cancelled";
   isPaid: boolean;
   price?: string;
@@ -105,7 +111,7 @@ export function EventEditor({
 }: EventEditorProps) {
   const [loading, setLoading] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
   const form = useForm<EventFormValues>({
     resolver: zodResolver(eventSchema),
@@ -122,11 +128,32 @@ export function EventEditor({
       accountName: "",
       accountNumber: "",
       image: "",
+      images: [],
     },
   });
 
+  const quillModules = useMemo(
+    () => ({
+      toolbar: [
+        [{ header: [2, 3, false] }],
+        ["bold", "italic", "underline"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link"],
+        ["clean"],
+      ],
+    }),
+    [],
+  );
+
   useEffect(() => {
     if (event) {
+      const images =
+        event.images && event.images.length > 0
+          ? event.images
+          : event.image
+            ? [event.image]
+            : [];
+
       form.reset({
         title: event.title,
         description: event.description,
@@ -141,9 +168,10 @@ export function EventEditor({
         bankName: event.bankDetails?.bankName || "",
         accountName: event.bankDetails?.accountName || "",
         accountNumber: event.bankDetails?.accountNumber || "",
-        image: event.image || "",
+        image: images[0] || "",
+        images,
       });
-      setImagePreview(event.image || null);
+      setImagePreviews(images);
     } else {
       form.reset({
         title: "",
@@ -158,50 +186,81 @@ export function EventEditor({
         accountName: "",
         accountNumber: "",
         image: "",
+        images: [],
       });
-      setImagePreview(null);
+      setImagePreviews([]);
     }
   }, [event, form, isOpen]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    const oversizedFile = files.find((file) => file.size > 5 * 1024 * 1024);
+
+    if (oversizedFile) {
+      toast.error(`${oversizedFile.name} is too large. Max 5MB.`);
+      e.target.value = "";
+      return;
+    }
 
     setIsUploading(true);
     try {
-      const base64 = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
-      });
+      const uploadedUrls: string[] = [];
 
-      const result = await uploadImage(base64, "made360/events");
-      if (result.success && result.url) {
-        form.setValue("image", result.url);
-        setImagePreview(result.url);
-      } else {
-        toast.error(result.error || "Upload failed");
+      for (const file of files) {
+        const result = await uploadFile(file, "made360/events");
+
+        if (result.success && result.url) {
+          uploadedUrls.push(result.url);
+        } else {
+          toast.error(result.error || `Upload failed for ${file.name}`);
+        }
+      }
+
+      if (uploadedUrls.length > 0) {
+        const nextImages = [...imagePreviews, ...uploadedUrls];
+        form.setValue("images", nextImages, { shouldDirty: true });
+        form.setValue("image", nextImages[0] || "", { shouldDirty: true });
+        setImagePreviews(nextImages);
+        toast.success(
+          uploadedUrls.length === 1
+            ? "Image uploaded"
+            : `${uploadedUrls.length} images uploaded`,
+        );
       }
     } catch (error) {
       console.error("Upload failed:", error);
       toast.error("Image upload failed");
     } finally {
       setIsUploading(false);
+      e.target.value = "";
     }
+  };
+
+  const removeImage = (index: number) => {
+    const nextImages = imagePreviews.filter(
+      (_, imageIndex) => imageIndex !== index,
+    );
+    setImagePreviews(nextImages);
+    form.setValue("images", nextImages, { shouldDirty: true });
+    form.setValue("image", nextImages[0] || "", { shouldDirty: true });
   };
 
   const onSubmit: SubmitHandler<EventFormValues> = async (values) => {
     setLoading(true);
     try {
+      const images = values.images || [];
+
       const eventData: Partial<IEvent> = {
         title: values.title,
-        description: values.description,
+        description: normalizeRichTextHtml(values.description),
         date: new Date(values.date),
         location: values.location,
         status: values.status,
         isPaid: values.isPaid,
         price: Number(values.price),
-        image: values.image,
+        image: images[0] || "",
+        images,
         paymentMethod: values.isPaid ? (values.paymentMethod || "gateway") : "gateway",
         bankDetails:
           values.isPaid && values.paymentMethod === "manual"
@@ -281,13 +340,18 @@ export function EventEditor({
                 name="description"
                 render={({ field }) => (
                   <FormItem className="md:col-span-2">
-                    <FormLabel>Description / Subtitle</FormLabel>
+                    <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Textarea
-                        {...field}
-                        placeholder="Short summary of the event..."
-                        className="bg-zinc-800 border-zinc-700 text-white min-h-[100px]"
-                      />
+                      <div className="bg-zinc-800 border border-zinc-700 rounded-md overflow-hidden min-h-[240px] [&_.ql-toolbar]:border-zinc-700 [&_.ql-toolbar]:bg-zinc-100 [&_.ql-container]:border-0 [&_.ql-editor]:min-h-[180px] [&_.ql-editor]:text-zinc-100 [&_.ql-editor.ql-blank::before]:text-zinc-500">
+                        <ReactQuill
+                          theme="snow"
+                          value={field.value}
+                          onChange={field.onChange}
+                          modules={quillModules}
+                          placeholder="Short summary of the event..."
+                          className="text-zinc-100"
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -589,29 +653,43 @@ export function EventEditor({
               </div>
 
               <div className="md:col-span-2">
-                <FormLabel>Event Image</FormLabel>
-                <div className="mt-2">
-                  {imagePreview ? (
-                    <div className="relative aspect-video w-full rounded-lg overflow-hidden border border-zinc-700">
+                <div className="flex items-center justify-between gap-4">
+                  <FormLabel>Event Images</FormLabel>
+                  {imagePreviews.length > 0 && (
+                    <span className="text-xs text-zinc-500">
+                      First image is used as the cover
+                    </span>
+                  )}
+                </div>
+                <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {imagePreviews.map((image, index) => (
+                    <div
+                      key={`${image}-${index}`}
+                      className="relative aspect-video w-full rounded-lg overflow-hidden border border-zinc-700"
+                    >
                       <Image
-                        src={imagePreview}
-                        alt="Preview"
+                        src={image}
+                        alt={`Event image ${index + 1}`}
                         fill
                         className="object-cover"
                       />
+                      {index === 0 && (
+                        <span className="absolute left-2 top-2 rounded-full bg-black/70 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                          Cover
+                        </span>
+                      )}
                       <button
                         type="button"
-                        onClick={() => {
-                          setImagePreview(null);
-                          form.setValue("image", "");
-                        }}
+                        onClick={() => removeImage(index)}
+                        aria-label={`Remove event image ${index + 1}`}
                         className="absolute top-2 right-2 p-1 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"
                       >
                         <X size={16} />
                       </button>
                     </div>
-                  ) : (
-                    <label className="flex flex-col items-center justify-center w-full aspect-video rounded-lg border-2 border-dashed border-zinc-700 bg-zinc-800/50 hover:bg-zinc-800 hover:border-zinc-500 transition-all cursor-pointer">
+                  ))}
+
+                  <label className="flex flex-col items-center justify-center w-full aspect-video rounded-lg border-2 border-dashed border-zinc-700 bg-zinc-800/50 hover:bg-zinc-800 hover:border-zinc-500 transition-all cursor-pointer">
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
                         {isUploading ? (
                           <Loader2 className="h-10 w-10 text-primary animate-spin" />
@@ -619,10 +697,10 @@ export function EventEditor({
                           <>
                             <Upload className="h-10 w-10 text-zinc-500 mb-2" />
                             <p className="text-sm text-zinc-400">
-                              Click to upload event image
+                              Click to upload event images
                             </p>
                             <p className="text-xs text-zinc-500 mt-1">
-                              SVG, PNG, JPG (max. 10MB)
+                              SVG, PNG, JPG (max. 5MB)
                             </p>
                           </>
                         )}
@@ -631,11 +709,11 @@ export function EventEditor({
                         type="file"
                         className="hidden"
                         accept="image/*"
+                        multiple
                         onChange={handleImageUpload}
                         disabled={isUploading}
                       />
                     </label>
-                  )}
                 </div>
               </div>
             </div>

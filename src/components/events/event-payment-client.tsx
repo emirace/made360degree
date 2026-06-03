@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
 import {
@@ -31,12 +31,17 @@ import {
 import Link from "next/link";
 import { useFlutterwave, closePaymentModal } from "flutterwave-react-v3";
 import { toast } from "sonner";
-import { uploadImagePublic } from "@/services/upload";
+import { uploadFile } from "@/services/client-upload";
 import { useRouter } from "next/navigation";
+import { normalizeRichTextHtml } from "@/lib/rich-text";
 
 interface EventPaymentClientProps {
   event: IEvent;
   recentEvents: IEvent[];
+}
+
+function isCloudinaryImage(src?: string) {
+  return src?.startsWith("https://res.cloudinary.com/") ?? false;
 }
 
 export function EventPaymentClient({
@@ -55,10 +60,25 @@ export function EventPaymentClient({
   const [submitted, setSubmitted] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const registrationFormRef = useRef<HTMLDivElement>(null);
+  const paymentButtonRef = useRef<HTMLDivElement>(null);
+  const [isRegistrationFormVisible, setIsRegistrationFormVisible] =
+    useState(false);
+  const [isPaymentButtonVisible, setIsPaymentButtonVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const amount = event.price || 0;
   const isManual = event.paymentMethod === "manual";
-  const isPast = new Date(event.date) < new Date(new Date().setHours(0, 0, 0, 0));
+  const isPast =
+    new Date(event.date) < new Date(new Date().setHours(0, 0, 0, 0));
+  const eventImages = Array.from(
+    new Set(
+      [
+        ...((event.images || []) as string[]),
+        ...(event.image ? [event.image] : []),
+      ].filter(Boolean),
+    ),
+  );
 
   // ── Flutterwave config (used only for gateway events) ──
   const config = {
@@ -84,6 +104,48 @@ export function EventPaymentClient({
   const router = useRouter();
 
   const handleFlutterPayment = useFlutterwave(config);
+
+  useEffect(() => {
+    const registrationForm = registrationFormRef.current;
+    const paymentButton = paymentButtonRef.current;
+
+    if (!registrationForm || !paymentButton) return;
+
+    const formObserver = new IntersectionObserver(
+      ([entry]) => setIsRegistrationFormVisible(entry.isIntersecting),
+      { threshold: 0.2 },
+    );
+    const buttonObserver = new IntersectionObserver(
+      ([entry]) => setIsPaymentButtonVisible(entry.isIntersecting),
+      { threshold: 0.4 },
+    );
+
+    formObserver.observe(registrationForm);
+    buttonObserver.observe(paymentButton);
+
+    return () => {
+      formObserver.disconnect();
+      buttonObserver.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!selectedImage) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedImage(null);
+      }
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedImage]);
 
   // ── Validate shared fields ──
   const validateDetails = () => {
@@ -146,12 +208,28 @@ export function EventPaymentClient({
     setShowManualModal(true);
   };
 
+  const handlePaymentAction = () => {
+    if (!isRegistrationFormVisible) {
+      registrationFormRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      return;
+    }
+
+    if (isManual) {
+      handleOpenManualModal();
+    } else {
+      handleGatewayPayment();
+    }
+  };
+
   // ── Receipt file selection ──
   const handleReceiptSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("File too large. Max 10MB.");
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File too large. Max 5MB.");
       return;
     }
     setReceiptFile(file);
@@ -175,22 +253,14 @@ export function EventPaymentClient({
     }
     setIsSubmitting(true);
     try {
-      // Convert receipt to base64
-      const base64 = await new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(receiptFile!);
-      });
-
-      // Upload receipt via existing service (public variant, no admin auth)
       let receiptUrl = "";
-      const uploadResult = await uploadImagePublic(base64, "made360/receipts");
+      const uploadResult = await uploadFile(receiptFile, "made360/receipts");
       if (uploadResult.success && uploadResult.url) {
         receiptUrl = uploadResult.url;
       }
 
-      if (!receiptUrl || uploadResult.success == false) {
-        toast.error("Failed to upload receipt");
+      if (!receiptUrl || !uploadResult.success) {
+        toast.error(uploadResult.error || "Failed to upload receipt");
         return;
       }
 
@@ -227,17 +297,59 @@ export function EventPaymentClient({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* ── Main Content ── */}
         <div className="lg:col-span-2 space-y-8">
-          <Card className="border-none shadow-none bg-white">
+          <Card className="border-none shadow-none bg-white p-2">
             <CardContent className="p-0 space-y-6">
-              <div className="space-y-4">
-                <p className="text-lg text-zinc-600 leading-relaxed">
-                  {event.description}
-                </p>
+              <div>
+                <div
+                  className="prose prose-lg prose-primary max-w-none w-full 
+                    prose-headings:font-bold prose-headings:tracking-tight 
+                    prose-p:text-black/70 prose-p:leading-relaxed
+                    prose-blockquote:italic prose-blockquote:border-l-primary prose-blockquote:bg-primary/5 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:rounded-r-2xl
+                    prose-img:rounded-[30px] prose-img:shadow-2xl prose-img:mx-auto prose-img:max-h-[400px] prose-img:w-full prose-img:object-cover"
+                  dangerouslySetInnerHTML={{
+                    __html: normalizeRichTextHtml(event.description),
+                  }}
+                />
               </div>
+              {eventImages.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {eventImages.map((image, index) => (
+                    <div
+                      key={`${image}-${index}`}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setSelectedImage(image)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          setSelectedImage(image);
+                        }
+                      }}
+                      className={
+                        eventImages.length === 1
+                          ? "relative aspect-video overflow-hidden rounded-lg bg-zinc-100 sm:col-span-2 cursor-zoom-in"
+                          : "relative aspect-video overflow-hidden rounded-lg bg-zinc-100 cursor-zoom-in"
+                      }
+                    >
+                      <Image
+                        src={image}
+                        alt={`${event.title} image ${index + 1}`}
+                        fill
+                        unoptimized={isCloudinaryImage(image)}
+                        sizes={
+                          eventImages.length === 1
+                            ? "(min-width: 1024px) 66vw, 100vw"
+                            : "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                        }
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+              <Separator className="bg-zinc-100 pt-5" />
 
-              <Separator className="bg-zinc-100" />
-
-              <div className="space-y-6">
+              <div ref={registrationFormRef} className="space-y-6 scroll-mt-24">
                 <div>
                   <h3 className="text-xl font-bold text-zinc-900 mb-2">
                     Secure Your Spot.
@@ -334,18 +446,19 @@ export function EventPaymentClient({
                       Registration Closed
                     </Button>
                     <p className="text-center text-sm text-red-500 font-medium">
-                      This event has already taken place. Registration is no longer available.
+                      This event has already taken place. Registration is no
+                      longer available.
                     </p>
                   </div>
                 ) : (
-                  <Button
-                    onClick={
-                      isManual ? handleOpenManualModal : handleGatewayPayment
-                    }
-                    className="w-full bg-primary text-white font-bold h-14 text-lg rounded-lg shadow-lg"
-                  >
-                    Confirm Registration & Pay
-                  </Button>
+                  <div ref={paymentButtonRef}>
+                    <Button
+                      onClick={handlePaymentAction}
+                      className="w-full bg-primary text-white font-bold h-14 text-lg rounded-lg shadow-lg"
+                    >
+                      Confirm Registration & Pay
+                    </Button>
+                  </div>
                 )}
               </div>
             </CardContent>
@@ -374,6 +487,7 @@ export function EventPaymentClient({
                         src={item.image || "/images/audience-executive.png"}
                         alt={item.title}
                         fill
+                        unoptimized={isCloudinaryImage(item.image)}
                         className="object-cover transition-transform group-hover:scale-110"
                       />
                     </div>
@@ -428,9 +542,19 @@ export function EventPaymentClient({
         </div>
       </div>
 
-      {/* ══════════════════════════════════════
-          Manual Transfer Modal
-      ══════════════════════════════════════ */}
+      {!isPast && !isPaymentButtonVisible && (
+        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-zinc-200 bg-white/95 px-4 py-3 shadow-2xl backdrop-blur-md">
+          <div className="mx-auto max-w-7xl">
+            <Button
+              onClick={handlePaymentAction}
+              className="h-14 w-full rounded-lg bg-primary text-base font-bold text-white shadow-lg hover:bg-primary/90"
+            >
+              Confirm Registration & Pay
+            </Button>
+          </div>
+        </div>
+      )}
+
       <Dialog open={showManualModal} onOpenChange={setShowManualModal}>
         <DialogContent className="max-w-lg bg-white border-zinc-200 text-zinc-900 p-0">
           <div className="overflow-y-auto max-h-[88vh] p-6" data-lenis-prevent>
@@ -569,7 +693,7 @@ export function EventPaymentClient({
                         Click to upload receipt
                       </p>
                       <p className="text-xs text-zinc-400 mt-1">
-                        PNG, JPG, PDF (max 10MB)
+                        PNG, JPG, PDF (max 5MB)
                       </p>
                       <input
                         ref={fileInputRef}
@@ -620,6 +744,38 @@ export function EventPaymentClient({
           </div>
         </DialogContent>
       </Dialog>
+
+      {selectedImage && (
+        <div
+          className="fixed inset-0 z-100 flex items-center justify-center bg-black/90 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Expanded event image"
+          onClick={() => setSelectedImage(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setSelectedImage(null)}
+            className="absolute right-4 top-4 z-10 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
+            aria-label="Close image preview"
+          >
+            <X className="h-6 w-6" />
+          </button>
+          <div
+            className="relative h-full max-h-[90vh] w-full max-w-6xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <Image
+              src={selectedImage}
+              alt={`${event.title} expanded image`}
+              fill
+              unoptimized={isCloudinaryImage(selectedImage)}
+              sizes="100vw"
+              className="object-contain"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

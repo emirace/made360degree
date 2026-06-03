@@ -12,6 +12,7 @@ export interface IEvent extends Document {
   date: Date;
   location: string;
   image?: string;
+  images?: string[];
   status: "upcoming" | "past" | "cancelled";
   isPaid: boolean;
   price?: number;
@@ -28,6 +29,7 @@ const EventSchema: Schema = new Schema(
     date: { type: Date, required: true },
     location: { type: String, required: true },
     image: { type: String },
+    images: [{ type: String }],
     isPaid: { type: Boolean, default: false },
     price: { type: Number },
     paymentMethod: {

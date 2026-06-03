@@ -26,7 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Upload, X } from "lucide-react";
 import { createBlog, updateBlog } from "@/services/blog";
-import { uploadImage } from "@/services/upload";
+import { uploadFile } from "@/services/client-upload";
 import "react-quill-new/dist/quill.snow.css";
 
 // Dynamically import ReactQuill to avoid SSR issues
@@ -133,6 +133,11 @@ export function BlogEditor({
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File too large. Max 5MB.");
+      e.target.value = "";
+      return;
+    }
 
     // Show local preview immediately
     const reader = new FileReader();
@@ -143,15 +148,7 @@ export function BlogEditor({
 
     setIsUploadingCover(true);
     try {
-      // Convert to base64 for server action
-      const base64 = await new Promise<string>((resolve) => {
-        const r = new FileReader();
-        r.onloadend = () => resolve(r.result as string);
-        r.readAsDataURL(file);
-      });
-
-      const result = await uploadImage(base64);
-      console.log(result);
+      const result = await uploadFile(file);
       if (result.success && result.url) {
         form.setValue("image", result.url);
       } else {
@@ -205,16 +202,14 @@ export function BlogEditor({
     input.onchange = async () => {
       const file = input.files?.[0];
       if (!file) return;
-
-      const base64 = await new Promise<string>((resolve) => {
-        const r = new FileReader();
-        r.onloadend = () => resolve(r.result as string);
-        r.readAsDataURL(file);
-      });
+      if (file.size > 5 * 1024 * 1024) {
+        alert("File too large. Max 5MB.");
+        return;
+      }
 
       setIsUploadingEditor(true);
       try {
-        const result = await uploadImage(base64);
+        const result = await uploadFile(file);
         if (result.success && result.url) {
           const quill = quillRef.current.getEditor();
           const range = quill.getSelection();

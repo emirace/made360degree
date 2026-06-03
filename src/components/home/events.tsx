@@ -8,16 +8,26 @@ import {
   ChevronRight,
   Calendar,
   MapPin,
-  ArrowRight,
   Banknote,
 } from "lucide-react";
 import MagneticButton from "@/components/animations/magnetic-button";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { IEvent } from "@/models/Event";
+import { stripHtml } from "@/lib/rich-text";
+
+interface HomeEvent {
+  _id: string;
+  title: string;
+  description: string;
+  date: string | Date;
+  location: string;
+  image?: string;
+  isPaid?: boolean;
+  price?: number;
+}
 
 interface EventsProps {
-  events: any[];
+  events: HomeEvent[];
 }
 
 export default function Events({ events }: EventsProps) {
@@ -46,8 +56,7 @@ export default function Events({ events }: EventsProps) {
 
   const onScroll = () => {
     if (scrollContainerRef.current) {
-      const { scrollLeft, scrollWidth, offsetWidth } =
-        scrollContainerRef.current;
+      const { scrollLeft, scrollWidth } = scrollContainerRef.current;
       const index = Math.round(
         scrollLeft / (scrollWidth / Math.max(events.length, 1)),
       );
@@ -93,7 +102,7 @@ export default function Events({ events }: EventsProps) {
             {events.map((event) => (
               <div
                 key={event._id}
-                className="flex-none w-[300px] md:w-[400px] aspect-4/5 relative rounded-lg overflow-hidden group shadow-2xl snap-center first:ml-6 last:mr-6"
+                className="flex-none w-75 md:w-100 aspect-4/5 relative rounded-lg overflow-hidden group shadow-2xl snap-center first:ml-6 last:mr-6"
               >
                 <Image
                   src={event.image || "/images/audience-executive.png"}
@@ -112,8 +121,8 @@ export default function Events({ events }: EventsProps) {
                     <h3 className="text-xl md:text-3xl font-bold leading-tight">
                       {event.title}
                     </h3>
-                    <p className="text-white/70 text-sm max-w-[280px] mx-auto line-clamp-2">
-                      {event.description}
+                    <p className="text-white/70 text-sm max-w-70 mx-auto line-clamp-2">
+                      {stripHtml(event.description)}
                     </p>
 
                     <div className="pt-8">
