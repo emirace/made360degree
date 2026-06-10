@@ -66,11 +66,11 @@ export async function POST(request: NextRequest) {
       const eventTitle = event?.title || "the event";
       const eventDate = event?.date
         ? new Date(event.date).toLocaleDateString("en-GB", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
         : "";
 
       if (paymentMethod === "card" && paymentStatus === "completed") {
@@ -85,11 +85,15 @@ export async function POST(request: NextRequest) {
         });
       } else if (paymentMethod === "manual_transfer") {
         // Manual transfer submitted — pending review
+        const origin = request.nextUrl.origin;
         await sendTransferSubmittedEmail({
           to: email,
           name,
           eventTitle,
           amount,
+          phone,
+          receiptUrl,
+          dashboardUrl: `${origin}/dashboard/events/${eventId}/registrations`,
         });
       }
     } catch (emailErr) {

@@ -97,6 +97,9 @@ export async function sendTransferSubmittedEmail(opts: {
   name: string;
   eventTitle: string;
   amount: number;
+  phone?: string;
+  receiptUrl?: string;
+  dashboardUrl?: string;
 }) {
   const html = wrapHtml(`
     <h2>Transfer Received — Under Review</h2>
@@ -115,6 +118,32 @@ export async function sendTransferSubmittedEmail(opts: {
     to: opts.to,
     subject: `⏳ Payment Under Review — ${opts.eventTitle}`,
     html,
+  });
+
+  const adminHtml = wrapHtml(`
+    <h2>Manual Transfer Pending Review ⏳</h2>
+    <p>Hello Admin,</p>
+    <p>A new registration has been submitted via <strong>Manual Bank Transfer</strong> and is awaiting your verification.</p>
+    <div class="detail-box">
+      <div class="row"><span class="label">Event</span><span class="value">${opts.eventTitle}</span></div>
+      <div class="row"><span class="label">Amount</span><span class="value">₦${opts.amount.toLocaleString()}</span></div>
+      <div class="row"><span class="label">User Name</span><span class="value">${opts.name}</span></div>
+      <div class="row"><span class="label">User Email</span><span class="value">${opts.to}</span></div>
+      ${opts.phone ? `<div class="row"><span class="label">User Phone</span><span class="value">${opts.phone}</span></div>` : ""}
+      <div class="row"><span class="label">Status</span><span class="value"><span class="badge badge-amber">Pending Verification</span></span></div>
+    </div>
+    <p>Please cross-reference the payment in your bank account. If the payment is valid, you can approve the registration in the admin dashboard.</p>
+    <div style="text-align: center; margin: 24px 0 10px 0;">
+      ${opts.receiptUrl ? `<a href="${opts.receiptUrl}" target="_blank" class="btn" style="background: #4b5563; margin-right: 12px; margin-bottom: 8px;">View Payment Receipt</a>` : ""}
+      ${opts.dashboardUrl ? `<a href="${opts.dashboardUrl}" target="_blank" class="btn" style="margin-bottom: 8px;">Go to Dashboard</a>` : ""}
+    </div>
+  `);
+
+  await transporter.sendMail({
+    from: FROM,
+    to: process.env.ADMIN_EMAIL || "sandranwafor67@gmail.com",
+    subject: `⏳ New Registration Notification — ${opts.name} (${opts.eventTitle})`,
+    html: adminHtml,
   });
 }
 
