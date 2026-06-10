@@ -171,3 +171,20 @@ export async function sendRegistrationRejectedEmail(opts: {
     html,
   });
 }
+
+export async function sendMail(opts: {
+  to: string;
+  eventTitle: string;
+  content: string;
+}) {
+  console.log("hellllo", {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  });
+  await transporter.sendMail({
+    from: FROM,
+    to: opts.to,
+    subject: `Registration Update — ${opts.eventTitle}`,
+    html: wrapHtml(opts.content),
+  });
+}

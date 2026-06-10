@@ -23,6 +23,23 @@ const Hero = () => {
   const statsY = useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
+  const testSendMail = async () => {
+    try {
+      await fetch("/api/send-mail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: "emmanuelakwuba57@gmail.com",
+          eventTitle: "Test email",
+          content: `<p> This is a test email</p>`,
+        }),
+      });
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error("send-mail error", err);
+    }
+  };
+
   return (
     <section
       ref={containerRef}
@@ -106,7 +123,10 @@ const Hero = () => {
             </Link>
           </MagneticButton>
           <MagneticButton>
-            <button className="text-base font-semibold text-white transition-colors hover:text-primary">
+            <button
+              className="text-base font-semibold text-white transition-colors hover:text-primary"
+              onClick={testSendMail}
+            >
               Explore Our Work
             </button>
           </MagneticButton>
