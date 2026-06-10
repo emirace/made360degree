@@ -125,7 +125,7 @@ const Hero = () => {
           <MagneticButton>
             <button
               className="text-base font-semibold text-white transition-colors hover:text-primary"
-              onClick={testSendMail}
+              // onClick={testSendMail}
             >
               Explore Our Work
             </button>
